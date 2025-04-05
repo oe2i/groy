@@ -3,7 +3,7 @@
 namespace Groy\Orig\Organizr;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
+use Groy\Xeno\Auth\AuthX;
 use Groy\Xeno\Http\RouteX;
 
 
@@ -14,7 +14,7 @@ class App extends Controller
 	{
 		$landing = 'dashboard';
 		// $route = RouteX::format('login');
-		if (Auth::check()) {
+		if (AuthX::is()) {
 			// 	$route = RouteX::format($landing);
 		}
 

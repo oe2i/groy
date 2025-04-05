@@ -3,39 +3,9 @@
 namespace Yale\Xeno\Auth;
 
 use Yale\Xeno\Data\StringX;
-use Illuminate\Support\Facades\Auth;
 
 class AuthX
 {
-	// ◈ property
-	private static $init = false;
-	protected static $is = false;
-	protected static $auth;
-
-
-
-	// ◈ === init »
-	protected static function init()
-	{
-		if (!self::$init) {
-			$auth = Auth::user();
-			if ($auth) {
-				self::$auth = $auth;
-				self::$is = true;
-			}
-			self::$init = true;
-		}
-	}
-
-
-
-	// ◈ === is »
-	public static function is()
-	{
-		self::init();
-		return self::$is;
-	}
-
 
 
 	// ◈ === name »
