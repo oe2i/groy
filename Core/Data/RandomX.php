@@ -297,7 +297,7 @@ class RandomX
 	// • === password »
 	public static function password($length = 12)
 	{
-		if (NumberX::isEven($length)) {
+		if (NumberX::even($length)) {
 			$A = self::length($length / 2);
 		} else {
 			$A = self::length(($length - 1) / 2);
