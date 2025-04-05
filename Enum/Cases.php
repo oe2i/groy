@@ -1,6 +1,6 @@
 <?php //*** Cases ~ enum » Groy™ Library © 2025 ∞ OE2i™ • www.oe2i.com ∞ Apache License ***//
 
-namespace Groy\Core\Enum;
+namespace Groy\Enum;
 
 enum Cases: string
 {

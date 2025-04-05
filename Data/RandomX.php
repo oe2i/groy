@@ -1,9 +1,9 @@
 <?php //*** RandomX ~ class » Groy™ Library © 2025 ∞ OE2i™ • www.oe2i.com ∞ Apache License ***//
 
-namespace Groy\Core\Data;
+namespace Groy\Data;
 
-use Groy\Core\Enum\Cases;
-use Groy\Core\Number\NumberX;
+use Groy\Enum\Cases;
+use Groy\Number\NumberX;
 
 class RandomX
 {
