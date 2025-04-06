@@ -44,7 +44,7 @@ class AuthX
 
 
 
-	// ◈ === name »
+	// • === name »
 	public static function name()
 	{
 		$name = 'anonymous';
@@ -52,5 +52,14 @@ class AuthX
 			$name = ObjectX::var(self::$user, 'name', true, $name);
 		}
 		return ucwords($name);
+	}
+
+
+
+	// • === moniker »
+	public static function moniker($length = null)
+	{
+		// TODO: implement moniker
+		return self::name();
 	}
 } //> end of class ~ AuthX
