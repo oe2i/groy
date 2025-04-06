@@ -2,6 +2,7 @@
 
 namespace Groy\Xeno\Auth;
 
+use Groy\Xeno\Data\ObjectX;
 use Illuminate\Support\Facades\Auth;
 
 class AuthX
@@ -47,8 +48,8 @@ class AuthX
 	public static function name()
 	{
 		$name = 'anonymous';
-		if (self::sure() && ObjectX::has($user, 'name')) {
-			$name = self::$user->name;
+		if (self::sure()) {
+			$name = ObjectX::var(self::$user, 'name', true, $name);
 		}
 		return ucwords($name);
 	}
