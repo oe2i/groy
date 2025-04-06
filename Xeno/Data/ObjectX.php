@@ -27,7 +27,33 @@ class ObjectX
 
 
 
-	// • === append » boolean
+	// • === has » boolean
+	public static function has($object, $property, $checkEmptyProperty = false): bool
+	{
+		if (self::empty($object) || !isset($object->$property)) {
+			return false;
+		}
+		if ($checkEmptyProperty && empty($object->$property)) {
+			return false;
+		}
+		return true;
+	}
+
+
+
+	// • === var » set default value if not set
+	public static function var($object, $property, $checkEmptyProperty = false, $default = null)
+	{
+		$has = self::has($object, $property,  $checkEmptyProperty);
+		if ($has) {
+			return $has;
+		}
+		return $default;
+	}
+
+
+
+	// • === append » append & return booleans
 	public static function append(&$object, $param)
 	{
 		if (CanX::iterate($param)) {
@@ -47,7 +73,8 @@ class ObjectX
 
 
 	// • === toArray »
-	public static function toArray($object){
+	public static function toArray($object)
+	{
 		return (array) $object;
 	}
 } //> end of class ~ ObjectX
