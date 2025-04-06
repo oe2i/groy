@@ -13,13 +13,11 @@ class App extends Controller
 	public static function index()
 	{
 		$landing = 'dashboard';
-		// $route = RouteX::format('login');
+		$route = RouteX::format('login');
 		if (AuthX::is()) {
-			// 	$route = RouteX::format($landing);
+			$route = RouteX::format($landing);
 		}
-
 		$route = (isset($route) && $route !== '' && $route !== false) ? $route : $landing;
-		// TODO: redirect if route is not active
-		return redirect($route);
+		return RouteX::redirect($route);
 	}
 } //> end of class ~ App
