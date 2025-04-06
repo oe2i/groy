@@ -129,7 +129,7 @@ class RandomX
 
 
 
-	// • === generate  »
+	// • === generate »
 	public static function generate()
 	{
 		return str_shuffle(
