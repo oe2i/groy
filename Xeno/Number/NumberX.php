@@ -53,4 +53,27 @@ class NumberX
 	{
 		return number_format($number, $decimal, $pointer, $separator);
 	}
+
+
+
+	// • === round »
+	public static function round($number, $decimal = 2)
+	{
+		$number = round($number, $decimal);
+		return (float) $number;
+	}
+
+
+
+	// • === decimal »
+	public static function decimal($number, $option = 'number', $separator = '.')
+	{
+		$decimalPart = StringX::after((string)$number, $separator);
+
+		if ($option === 'number') {
+			return $decimalPart ?? false;
+		}
+
+		return !is_null($decimalPart) ? strlen($decimalPart) : 0;
+	}
 } //> end of class ~ NumberX
