@@ -2,6 +2,7 @@
 namespace Groy\Spine\Ally;
 
 use Groy\Spine\Core\PathX;
+use Groy\Spine\Ally\BladeX;
 
 class LoadX
 {
@@ -27,5 +28,18 @@ class LoadX
 				}
 			}
 		}
+	}
+
+
+
+	// • === check »
+	public static function check($blade, $e404 = true)
+	{
+		if (!BladeX::is($blade)) {
+		}
+		if ($e404) {
+			return BladeX::e404($blade);
+		}
+		return false;
 	}
 } //> end of class ~ LoadX
