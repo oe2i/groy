@@ -1,6 +1,6 @@
 <?php //*** NumberX ~ class » Groy™ Library © 2025 ∞ OE2i™ • www.oe2i.com ∞ Apache License ***//
 
-namespace Groy\Xero\Number;
+namespace Groy\Xeno\Number;
 
 class NumberX
 {
@@ -68,12 +68,12 @@ class NumberX
 	// • === decimal »
 	public static function decimal($number, $option = 'number', $separator = '.')
 	{
-		$decimalPart = StringX::after((string)$number, $separator);
+		// $decimalPart = StringX::after((string)$number, $separator);
 
 		if ($option === 'number') {
 			return $decimalPart ?? false;
 		}
 
-		return !is_null($decimalPart) ? strlen($decimalPart) : 0;
+		// return !is_null($decimalPart) ? strlen($decimalPart) : 0;
 	}
 } //> end of class ~ NumberX
