@@ -3,7 +3,7 @@
 namespace Groy\Xeno\Data;
 
 use Groy\Concept\Enum\Cases;
-use Groy\Xero\Number\NumberX;
+use Groy\Xeno\Number\NumberX;
 
 class RandomX
 {
