@@ -121,7 +121,7 @@ class PathX
 	{
 		self::init();
 		if ($type === 'route') {
-			$path = self::route(EnvX::theme());
+			$path = self::route(strtolower(EnvX::theme()));
 		}
 		return $path;
 	}
