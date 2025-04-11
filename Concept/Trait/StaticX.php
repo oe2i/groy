@@ -9,7 +9,6 @@ trait StaticX
 	{
 		// ➝ get property
 		if (is_string($prop) && isset(self::${$prop})) {
-
 			if (!empty($key)) {
 
 				if (is_object(self::${$prop}) && isset(self::${$prop}->$key)) {
