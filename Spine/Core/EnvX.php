@@ -2,7 +2,6 @@
 
 namespace Groy\Spine\Core;
 
-use Groy\Spine\DebugX;
 use Groy\Concept\Trait\StaticX;
 use Illuminate\Support\Facades\App;
 
@@ -33,19 +32,21 @@ class EnvX
 	private static function toArray($line)
 	{
 		$result = [];
-		$pairs = array_filter(array_map('trim', explode(';', $line)));
-		foreach ($pairs as $pair) {
-			if (strpos($pair, '=') !== false) {
-				list($key, $value) = explode('=', $pair, 2);
-				$key = trim($key);
-				$value = trim($value);
-				if (isset($result[$key])) {
-					if (!is_array($result[$key])) {
-						$result[$key] = [$result[$key]];
+		if (!empty($line) && (strpos($line, ';') !== false)) {
+			$pairs = array_filter(array_map('trim', explode(';', $line)));
+			foreach ($pairs as $pair) {
+				if (strpos($pair, '=') !== false) {
+					list($key, $value) = explode('=', $pair, 2);
+					$key = trim($key);
+					$value = trim($value);
+					if (isset($result[$key])) {
+						if (!is_array($result[$key])) {
+							$result[$key] = [$result[$key]];
+						}
+						$result[$key][] = $value;
+					} else {
+						$result[$key] = $value;
 					}
-					$result[$key][] = $value;
-				} else {
-					$result[$key] = $value;
 				}
 			}
 		}
@@ -69,7 +70,6 @@ class EnvX
 		$property = strtolower($property);
 		$line = config('app.' . $property);
 		if (empty($line)) {
-			// return self::error('property is empty', $property);
 			$line = [];
 		}
 
@@ -159,4 +159,13 @@ class EnvX
 		return self::property('developer', $key);
 	}
 
+
+
+	// • === theme »
+	public static function theme()
+	{
+		self::init();
+		$theme = self::property('project', 'theme');
+		return !empty($theme) ? $theme : 'groy';
+	}
 } //> end of class ~ EnvX
