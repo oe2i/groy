@@ -1,0 +1,53 @@
+<?php //*** CollectionX ~ class » Groy™ Library © April, 2025 ∞ OE2i™ • www.oe2i.com ∞ Apache License ***//
+
+namespace Groy\Xeno\Data;
+
+use Illuminate\Support\Collection;
+
+class CollectionX
+{
+
+	// • === is »
+	public static function is($collection)
+	{
+		return ($collection instanceof Collection);
+	}
+
+
+
+	// • === has »
+	public static function has($collection)
+	{
+		if ($collection instanceof Collection) {
+			return $collection->isNotEmpty();
+		}
+		return false;
+	}
+
+
+
+	// • === create »
+	public static function create($items)
+	{
+		$collection = Collection::make($items);
+		if (self::is($collection)) {
+			return $collection;
+		}
+		return false;
+	}
+
+
+
+	// • === toArray »
+	public static function toArray($collection)
+	{
+		if (self::is($collection)) {
+			$data = $collection->toArray();
+			if (ArrayX::isMultiOne($data)) {
+				return $data[0];
+			}
+			return $data;
+		}
+		return false;
+	}
+} //> end of class ~ CollectionX
