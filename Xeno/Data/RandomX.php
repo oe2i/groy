@@ -1,4 +1,4 @@
-<?php //*** RandomX ~ class » Groy™ Library © 2025 ∞ OE2i™ • www.oe2i.com ∞ Apache License ***//
+<?php //*** RandomX ~ class » Groy™ Library © April, 2025 ∞ OE2i™ • www.oe2i.com ∞ Apache License ***//
 
 namespace Groy\Xeno\Data;
 
@@ -314,5 +314,27 @@ class RandomX
 
 		$partC = self::alphanumeric($length);
 		return $partA . $partB . $partC;
+	}
+
+
+
+	// • === sequence » generate sequential number
+	public static function sequence($last = null, $prefix = null)
+	{
+		if (!$prefix) {
+			$prefix = date('Ym');
+		}
+
+		if (!empty($prefix)) {
+			$prefix .= '-';
+		}
+
+		if (!$last) {
+			$last = '000';
+		} else {
+			$last = StringX::afterAs($last, '-');
+		}
+
+		return $prefix . str_pad((int) $last + 1, 4, '0', STR_PAD_LEFT);
 	}
 } //> end of class ~ RandomX
