@@ -2,6 +2,8 @@
 
 namespace Groy\Xeno\Theme;
 
+use Groy\Spine\Core\DebugX;
+
 class PageX
 {
 	// • === as »
@@ -9,4 +11,18 @@ class PageX
 	{
 		return ThemeX::as('page', $file);
 	}
-} //> end of class ~ PageX
+
+
+
+
+
+	// • === oreo »
+	public static function oreo($page) {
+
+		// ➝ auth
+		if (in_array($page, ['login', 'register'])) {
+			$page = 'auth.'.$page;
+			// return LayoutX::page($page);
+		}
+	}
+} //> end of class ~ PageX;
