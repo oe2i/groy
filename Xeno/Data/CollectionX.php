@@ -41,13 +41,13 @@ class CollectionX
 	// • === toArray »
 	public static function toArray($collection)
 	{
-		if (self::is($collection)) {
+		if (self::has($collection)) {
 			$data = $collection->toArray();
 			if (ArrayX::isMultiOne($data)) {
 				return $data[0];
 			}
 			return $data;
 		}
-		return false;
+		return [];
 	}
 } //> end of class ~ CollectionX
