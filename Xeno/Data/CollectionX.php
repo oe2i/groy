@@ -26,6 +26,14 @@ class CollectionX
 
 
 
+	// • === empty »
+	public static function empty($collection)
+	{
+		return ($collection instanceof Collection) && $collection->isEmpty();
+	}
+
+
+
 	// • === create »
 	public static function create($items)
 	{
