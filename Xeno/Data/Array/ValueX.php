@@ -61,4 +61,35 @@ class ValueX
 	{
 		return ArrayX::unique($array);
 	}
+
+
+
+	// • === toString → prevent duplicate »
+	public static function toString($array, $flag = 'string', $separator = ' ')
+	{
+		return ArrayX::toString($array, $flag, $separator);
+	}
+
+
+
+	// • === strip → remove from array [by value] »
+	public static function strip($array, $filter)
+	{
+		if (!ArrayX::has($array)) {
+			return false;
+		}
+
+		if (!is_array($filter)) {
+			if (($key = array_search($filter, $array)) !== false) {
+				unset($array[$key]);
+			}
+		} else {
+			foreach ($filter as $index => $value) {
+				if (($key = array_search($value, $array)) !== false) {
+					unset($array[$key]);
+				}
+			}
+		}
+		return $array;
+	}
 } //> end of class ~ ValueX
