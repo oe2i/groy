@@ -176,6 +176,21 @@ class KeyX
 
 
 
+	// • === stripNull → remove key with no value from array »
+	public static function stripNull($array)
+	{
+		if (ArrayX::has($array)) {
+			foreach ($array as $key => $value) {
+				if (is_null($value)) {
+					unset($array[$key]);
+				}
+			}
+		}
+		return $array;
+	}
+
+
+
 	// • === toUpper »
 	public static function toUpper($array)
 	{
