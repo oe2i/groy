@@ -141,7 +141,23 @@ class ArrayX
 
 
 
-	// • === is »
+	// • === unique → prevent duplicate values »
+	public static function unique($array)
+	{
+		if (!self::has($array)) {
+			return false;
+		}
+
+		if (MultiX::is($array)) {
+			foreach ($array as $index => $value) {
+				if (self::is($array[$index])) {
+					$array[$index] = self::unique($array[$index]);
+				}
+			}
+		}
+
+		return array_unique($array, SORT_REGULAR);
+	}
 
 
 
