@@ -53,4 +53,12 @@ class ValueX
 		}
 		return false;
 	}
+
+
+
+	// • === unique → prevent duplicate »
+	public static function unique($array)
+	{
+		return ArrayX::unique($array);
+	}
 } //> end of class ~ ValueX
