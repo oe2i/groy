@@ -161,19 +161,59 @@ class ArrayX
 
 
 
-	// • === is »
+	// • === toString → array to string »
+	public static function toString($array, $flag = 'string', $separator = ' ')
+	{
+		if (MultiX::is($array)) {
+			foreach ($array as $index => $value) {
+				if (self::is($array[$index])) {
+					$array[$index] = self::toString($array[$index]);
+				}
+			}
+		}
+
+		if (self::has($array)) {
+			if (strtolower($flag) === 'uri') {
+				if (empty($separator) || strtolower($separator) === 'default') {
+					return http_build_query($array);
+				}
+				return http_build_query($array, '', $separator);
+			}
+			return implode($separator, $array);
+		}
+
+		return false;
+	}
 
 
 
-	// • === is »
+	// • === toJSON → array to json »
+	public static function toJSON($array)
+	{
+		if (!self::has($array)) {
+			return false;
+		}
+		if (MultiX::is($array)) {
+			return json_encode($array, JSON_FORCE_OBJECT);
+		}
+		return json_encode($array);
+	}
 
 
 
-	// • === is »
+	// • === toObject → array to object »
+	public static function toObject($array, $multi = true)
+	{
+		if (!self::has($array)) {
+			return false;
+		}
 
+		if ($multi && MultiX::is($array)) {
+			return json_decode(json_encode($array), false);
+		}
 
-
-	// • === is »
+		return (object) $array;
+	}
 
 
 
