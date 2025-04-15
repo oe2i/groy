@@ -92,4 +92,32 @@ class ValueX
 		}
 		return $array;
 	}
+
+
+
+	// • === append → add value to array »
+	public static function append($array, $value)
+	{
+		if (!ArrayX::is($array)) {
+			return false;
+		}
+		array_push($array, $value);
+		return $array;
+	}
+
+
+
+	// • === exclude » exclude specific values from array
+	public static function exclude($array, $exclude, $reindex = false)
+	{
+		if (!empty($exclude)) {
+			$exclude = is_array($exclude) ? $exclude : [$exclude];
+			$array = array_diff($array, $exclude);
+			if ($reindex === true) {
+				return array_values($array);
+			}
+		}
+
+		return $array;
+	}
 } //> end of class ~ ValueX
