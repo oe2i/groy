@@ -2,6 +2,10 @@
 
 namespace Groy\Xeno\Data;
 
+use Groy\Xeno\Data\String\SwapX;
+use Groy\Xeno\Data\String\SpaceX;
+use Groy\Xeno\Data\String\StripX;
+use Groy\Xeno\Data\String\CropX;
 use Illuminate\Support\Str;
 use Yale\Orig\Is;
 use Yale\Orig\Can;
@@ -90,7 +94,7 @@ class StringX
 	// • === in » boolean
 	public static function in($string, $needle, $case = true)
 	{
-		if (!self::has($string)) {
+		if (!self::has($string) || !self::is($needle)) {
 			return false;
 		}
 
@@ -257,142 +261,77 @@ class StringX
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	// • === occurrenceGroupNth »
-	// TODO: understand code and purpose, I wrote this a long time ago
-	public static function occurrenceGroupNth($string, $separator, $nth, $req = 'nth')
+	public static function occurrenceGroupNth($string, $separator, $nth, $return = 'nth')
 	{
-		$occurrence = [];
+		if (!self::has($string) || !is_numeric($nth)) {
+			return false;
+		}
+
 		$parts = explode($separator, $string);
-		for ($i = 0; $i < count($parts); $i = $i + $nth) {
-			$occurrence[] = implode($separator, array_slice($parts, $i, $i + $nth));
+		$groups = [];
+		$nth = (int) $nth;
+
+		for ($i = 0; $i < count($parts); $i += $nth) {
+			$chunk = array_slice($parts, $i, $nth);
+			$groups[] = implode($separator, $chunk);
 		}
-		if (strtolower($req) === 'nth') {
-			return $occurrence[$nth - 1];
+
+		switch (strtolower($return)) {
+			case 'nth':
+				return $groups[$nth - 1] ?? false;
+
+			case 'first':
+				return $groups[0] ?? false;
+
+			case 'last':
+				return end($groups);
+
+			default:
+				return $groups;
 		}
-		return $occurrence;
 	}
 
 
 
-	// • === swap → replacement »
-	public static function swap($string, $needle, $substitute, $occurrence = 'all', $case = false)
+	// • === swap »
+	public static function swap()
 	{
-		if (self::in($string, $needle, $case)) {
-			if (strtolower($occurrence) === 'all') {
-				if ($case) {
-					$string = str_replace($needle, $substitute, $string);
-				} else {
-					$string = str_ireplace($needle, $substitute, $string);
-				}
-			} else {
-				if (strtolower($occurrence) === 'first') {
-					if ($case) {
-						$pos = strpos($string, $needle);
-					} else {
-						$pos = stripos($string, $needle);
-					}
-				}
-				if (strtolower($occurrence) === 'last') {
-					if ($case) {
-						$pos = strrpos($string, $needle);
-					} else {
-						$pos = strripos($string, $needle);
-					}
-				}
-				if ($pos !== false) {
-					return substr_replace($string, $substitute, $pos, strlen($needle));
-				}
-			}
-		}
-		return $string;
+		return new SwapX;
 	}
 
 
 
-	// • === swapDS → swap directory separator »
-	public static function swapDS($string, $swap, $occurrence = 'all')
+	// • === space »
+	public static function space()
 	{
-		return self::swap($string, DIRECTORY_SEPARATOR, $swap, $occurrence);
+		return new SpaceX;
 	}
 
 
 
-	// • === swapPS → swap directory separator »
-	public static function swapPS($string, $swap, $occurrence = 'all')
+	// • === strip »
+	public static function strip()
 	{
-		return self::swap($string, '/', $swap, $occurrence);
+		return new StripX;
 	}
 
 
 
-	// • === swapFirst → replace first occurrence »
-	public static function swapFirst($string, $needle, $substitute = '', $case = false)
+	// • === crop »
+	public static function crop()
 	{
-		return self::swap($string, $needle, $substitute, 'first', $case);
+		return new CropX;
 	}
 
 
 
-	// • === swapLast → replace last occurrence »
-	public static function swapLast($string, $needle, $substitute = '', $case = false)
+	// • === case »
+	public static function case()
 	{
-		return self::swap($string, $needle, $substitute, 'last', $case);
+		return new CaseX;
 	}
 
-
-
-	// • === swapSpace → replace space character & vice-versa »
-	public static function swapSpace($string, $needle, $inverse = false)
-	{
-		if (!self::empty($string) && self::is($needle)) {
-			if (!$inverse && self::contain($string, 'space')) {
-				return self::swap($string, ' ', $needle);
-			} elseif ($inverse && self::contain($string, $needle)) {
-				return self::swap($string, $needle, ' ');
-			}
-			return $string;
-		}
-		return false;
-	}
-
-
-
-	// • === singleSpace → ... » boolean
-	public static function singleSpace($string)
-	{
-		return preg_replace('/\s+/', ' ', $string);
-	}
-
-
-
-	// • === noSpace → ... » boolean
-	public static function noSpace($string)
-	{
-		return self::swap($string, ' ', '');
-	}
 
 
 	// • === noChar → remove special characters
@@ -414,123 +353,34 @@ class StringX
 
 
 
-	// • === strip → remove from occurrence from string »
-	public static function strip($string, $needle, $case = false)
-	{
-		return self::swap($string, $needle, '', 'all', $case);
-	}
 
 
 
-	// • === stripFirst → remove from first occurrence from string »
-	public static function stripFirst($string, $needle, $case = false)
-	{
-		return self::swapFirst($string, $needle, '', $case);
-	}
 
 
-
-	// • === stripLast → remove from last occurrence from string »
-	public static function stripLast($string, $needle, $case = false)
-	{
-		return self::swapLast($string, $needle, '', $case);
-	}
-
-
-
-	// • === stripNth → remove nth character from string »
-	public static function stripNth($string, $nth, $number = null)
-	{
-		if (!$number) {
-			if ($nth <= 0 || $nth > strlen($string)) {
-				return $string;
-			}
-			return substr($string, 0, $nth - 1) . substr($string, $nth);
-		} else {
-			if ($nth <= 0 || $nth > strlen($string) || $x <= 0) {
-				return $string;
-			}
-			$start = substr($string, 0, $nth - 1);
-			$end = substr($string, $nth + $x - 1);
-			return $start . $end;
-		}
-	}
-
-
-
-	// • === crop → trim edges or character(s) »
-	public static function crop($string, $needle = 'space', $case = false)
-	{
-		if (!self::empty($string) && !self::empty($needle)) {
-			if (strtolower($needle) === 'space') {
-				return trim($string);
-			} elseif (self::in($string, $needle, $case)) {
-				$string = trim($string);
-				return trim($string, $needle);
-			}
-			return $string;
-		}
-		return false;
-	}
-
-
-
-	// • === cropBegin → remove beginning of string »
-	public static function cropBegin($string, $needle, $case = false)
-	{
-		if (self::beginWith($string, $needle)) {
-			return self::stripFirst($string, $needle, $case);
-		}
-		return $string;
-	}
-
-
-	// • === cropBeginNth → crop from beginning of string to nth position »
-	public static function cropBeginNth($string, $nth)
-	{
-		return substr($string, $nth);
-	}
-
-
-
-	// • === cropEnd → remove end of string »
-	public static function cropEnd($string, $needle, $case = false)
-	{
-		if (self::endWith($string, $needle)) {
-			return self::stripLast($string, $needle, $case);
-		}
-		return $string;
-	}
-
-
-
-	// • === cropEndNth → crop from ending of string to nth position »
-	public static function cropEndNth($string, $nth)
-	{
-		return substr($string, 0, $nth);
-	}
 
 
 	// • === before → string before character
 	public static function before($string, $needle, $strip = true, $case = false)
 	{
-		if (!self::empty($string) && self::in($string, $needle, $case)) {
-			if (!$case) {
-				$pos = stripos($string, $needle);
-			} else {
-				$pos = strpos($string, $needle);
-			}
-			if ($pos && $pos != 0) {
-				$res = substr($string, 0, $pos);
-			}
-			if (!$strip) {
-				$res = $res . $needle;
-			}
-			if (isset($res)) {
-				return $res;
-			}
+		if (!self::has($string) || !self::in($string, $needle, $case)) {
+			return false;
 		}
-		return false;
+
+		if (!$case) {
+			$pos = stripos($string, $needle);
+		} else {
+			$pos = strpos($string, $needle);
+		}
+		if ($pos && $pos != 0) {
+			$res = substr($string, 0, $pos);
+		}
+		if (!$strip) {
+			$res = $res . $needle;
+		}
+		if (isset($res)) {
+			return $res;
+		}
 	}
 
 
@@ -548,34 +398,37 @@ class StringX
 
 
 	// • === after → string after character
-	public static function after($string, $needle, $strip = true, $case = false, $occurrence = 'FIRST')
+	public static function after($string, $needle, $strip = true, $case = false, $occurrence = 'first')
 	{
-		if (!self::empty($string) && self::in($string, $needle, $case)) {
-			if ($case) {
-				$string = strstr($string, $needle);
-			} else {
-				$string = stristr($string, $needle);
-			}
-			if ($string !== false) {
-				if ($strip === true && $occurrence === 'FIRST') {
-					$string = self::swapFirst($string, $needle, '', $case);
-				} elseif ($occurrence === 'LAST') {
-					if ($case) {
-						$pos = strrpos($string, $needle);
-					} else {
-						$pos = strripos($string, $needle);
-					}
-					if ($pos !== false) {
-						$string = substr($string, $pos + strlen($needle));
-					}
-					if ($strip === false) {
-						$string = $needle . $string;
-					}
+		if (!self::has($string) || !self::in($string, $needle, $case)) {
+			return false;
+		}
+
+		if ($case) {
+			$string = strstr($string, $needle);
+		} else {
+			$string = stristr($string, $needle);
+		}
+
+		if ($string !== false) {
+			if ($strip === true && $occurrence === 'first') {
+				$string = SwapX::first($string, $needle, '', $case);
+			} elseif ($occurrence === 'last') {
+				if ($case) {
+					$pos = strrpos($string, $needle);
+				} else {
+					$pos = strripos($string, $needle);
 				}
-				return $string;
+				if ($pos !== false) {
+					$string = substr($string, $pos + strlen($needle));
+				}
+				if ($strip === false) {
+					$string = $needle . $string;
+				}
 			}
 		}
-		return false;
+
+		return $string;
 	}
 
 
@@ -645,31 +498,60 @@ class StringX
 	// • === blur → blur censored character & vice-versa
 	public static function blur($string, $library, $blur = '***', $case = false)
 	{
-		if (!self::empty($string) && !empty($library)) {
-			$words = explode(" ", $string);
-			if (!is_array($library)) {
-				if (self::contain($library, '|')) {
-					$library = self::swap($library, ' | ', '|');
-					$library = explode('|', $library);
-				} elseif (self::contain($library, '-')) {
-					$library = self::swap($library, ' - ', '-');
-					$library = explode('-', $library);
-				} elseif (self::contain($library, ',')) {
-					$library = self::swap($library, ' , ', ',');
-					$library = explode(',', $library);
-				} else {
-					$library = explode(' ', $library);
-				}
-			}
-			foreach ($words as $word) {
-				if (in_array(strtolower($word), array_map('strtolower', $library))) {
-					$string = self::swap($string, $word, $blur, 'all', $case);
-				}
-			}
-			return $string;
+		if (!self::has($string) || empty($library)) {
+			return false;
 		}
-		return false;
+
+		$words = explode(" ", $string);
+		if (!is_array($library)) {
+			if (self::contain($library, '|')) {
+				$library = SwapX::all($library, ' | ', '|');
+				$library = explode('|', $library);
+			} elseif (self::contain($library, '-')) {
+				$library = SwapX::all($library, ' - ', '-');
+				$library = explode('-', $library);
+			} elseif (self::contain($library, ',')) {
+				$library = SwapX::all($library, ' , ', ',');
+				$library = explode(',', $library);
+			} else {
+				$library = explode(' ', $library);
+			}
+		}
+
+		foreach ($words as $word) {
+			if (in_array(strtolower($word), array_map('strtolower', $library))) {
+				$string = SwapX::all($string, $word, $blur,  $case);
+			}
+		}
+
+		return $string;
 	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 	// • === isUppercase → is string upper case » boolean
@@ -1116,7 +998,7 @@ class StringX
 
 
 	// • === space »
-	public static function space($string, $separator = ['/', '-', '_', '.'])
+	public static function spacez($string, $separator = ['/', '-', '_', '.'])
 	{
 		if (!empty($separator)) {
 			if (is_array($separator)) {
