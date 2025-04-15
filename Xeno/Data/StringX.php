@@ -206,48 +206,44 @@ class StringX
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	// • === occurrence → count » boolean, number
 	public static function occurrence($string, $needle, $offset = 0, $length = null)
 	{
-		if (!self::empty($string)) {
-			$stringLength = strlen($string);
-			if ($length > $stringLength) {
-				$length = $stringLength;
-			}
-			return substr_count($string, $needle, $offset, $length);
+		if (!self::has($string) || !self::has($needle) || !is_numeric($offset)) {
+			return false;
 		}
-		return false;
+
+		$stringLength = strlen($string);
+
+		$offset = (int) $offset;
+		if ($offset < 0 || $offset >= $stringLength) {
+			return false;
+		}
+
+		if ($length !== null) {
+			$length = (int) $length;
+			if ($length < 0) {
+				return false;
+			}
+
+			if (($offset + $length) > $stringLength) {
+				$length = ($stringLength - $offset);
+			}
+		}
+		return substr_count($string, $needle, $offset, $length);
 	}
 
 
 
-	// ◈ === occurrenceNth » get position of nth occurrence
+	// • === occurrenceNth » get position of nth occurrence
 	public static function occurrenceNth($string, $character, $nth)
 	{
+		if (!self::has($string) || !self::has($character) || !is_numeric($nth)) {
+			return false;
+		}
+
 		$position = -1;
+		$nth = (int) $nth;
 		while ($nth > 0) {
 			$position = strpos($string, $character, $position + 1);
 			if ($position === false) {
@@ -255,12 +251,36 @@ class StringX
 			}
 			$nth--;
 		}
+
 		return $position;
 	}
 
 
 
-	// ◈ === occurrenceGroupNth »
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	// • === occurrenceGroupNth »
 	// TODO: understand code and purpose, I wrote this a long time ago
 	public static function occurrenceGroupNth($string, $separator, $nth, $req = 'nth')
 	{
@@ -312,7 +332,7 @@ class StringX
 
 
 
-	// ◈ === swapDS → swap directory separator »
+	// • === swapDS → swap directory separator »
 	public static function swapDS($string, $swap, $occurrence = 'all')
 	{
 		return self::swap($string, DIRECTORY_SEPARATOR, $swap, $occurrence);
@@ -320,7 +340,7 @@ class StringX
 
 
 
-	// ◈ === swapPS → swap directory separator »
+	// • === swapPS → swap directory separator »
 	public static function swapPS($string, $swap, $occurrence = 'all')
 	{
 		return self::swap($string, '/', $swap, $occurrence);
@@ -418,7 +438,7 @@ class StringX
 
 
 
-	// ◈ === stripNth → remove nth character from string »
+	// • === stripNth → remove nth character from string »
 	public static function stripNth($string, $nth, $number = null)
 	{
 		if (!$number) {
@@ -465,7 +485,7 @@ class StringX
 	}
 
 
-	// ◈ === cropBeginNth → crop from beginning of string to nth position »
+	// • === cropBeginNth → crop from beginning of string to nth position »
 	public static function cropBeginNth($string, $nth)
 	{
 		return substr($string, $nth);
@@ -484,7 +504,7 @@ class StringX
 
 
 
-	// ◈ === cropEndNth → crop from ending of string to nth position »
+	// • === cropEndNth → crop from ending of string to nth position »
 	public static function cropEndNth($string, $nth)
 	{
 		return substr($string, 0, $nth);
@@ -612,7 +632,7 @@ class StringX
 
 
 
-	// ◈ === surround » string before & after needle
+	// • === surround » string before & after needle
 	public static function surround($string, $needle, $strip = true, $case = false): bool
 	{
 		$before = self::before($string, $needle, $strip, $case);
@@ -800,7 +820,7 @@ class StringX
 
 
 
-	// ◈ === endWithNewline » check if string ends with newline
+	// • === endWithNewline » check if string ends with newline
 	public static function endWithNewline($string)
 	{
 		return preg_match('/(\r?\n)$/', $string);
@@ -1040,7 +1060,7 @@ class StringX
 
 
 
-	// ◈ === grabAcronym »
+	// • === grabAcronym »
 	public static function grabAcronym($string)
 	{
 		preg_match_all('/[A-Z]{2,}/', $string, $matches, PREG_OFFSET_CAPTURE);
@@ -1058,14 +1078,14 @@ class StringX
 
 
 
-	// ◈ === hasAcronym »
+	// • === hasAcronym »
 	public static function hasAcronym($string)
 	{
 		return preg_match('/[A-Z]{2,}/', $string);
 	}
 
 
-	// ◈ === sentenceCase »
+	// • === sentenceCase »
 	public static function sentenceCase($string, $acronym = true)
 	{
 		if (self::is($string)) {
@@ -1095,7 +1115,7 @@ class StringX
 	}
 
 
-	// ◈ === space »
+	// • === space »
 	public static function space($string, $separator = ['/', '-', '_', '.'])
 	{
 		if (!empty($separator)) {
@@ -1111,7 +1131,7 @@ class StringX
 	}
 
 
-	// ◈ === countWords »
+	// • === countWords »
 	public static function count($string, $option = 'string')
 	{
 		if (self::is($string)) {
@@ -1126,14 +1146,14 @@ class StringX
 
 
 
-	// ◈ === countWord »
+	// • === countWord »
 	public static function countWord($string)
 	{
 		return self::count($string, 'words');
 	}
 
 
-	// ◈ === camelCase →
+	// • === camelCase →
 	public static function camelCase($string, $separator = null, $strip = true)
 	{
 		if (!empty($separator)) {
@@ -1162,14 +1182,14 @@ class StringX
 
 
 
-	// ◈ === firstCap »
+	// • === firstCap »
 	public static function firstCap($string)
 	{
 		return ucfirst(strtolower($string));
 	}
 
 
-	// ◈ === sentence »
+	// • === sentence »
 	public static function sentence($string, $acronym = true)
 	{
 		if (self::is($string)) {
@@ -1200,14 +1220,14 @@ class StringX
 
 
 
-	// ◈ === capitalize →
+	// • === capitalize →
 	public static function capitalize($string)
 	{
 		return ucwords(self::sentence($string));
 	}
 
 
-	// ◈ === lowercase →
+	// • === lowercase →
 	public static function lowercase($string)
 	{
 		if (self::is($string)) {
@@ -1218,7 +1238,7 @@ class StringX
 
 
 
-	// ◈ === uppercase →
+	// • === uppercase →
 	public static function uppercase($string)
 	{
 		if (self::is($string)) {
@@ -1228,7 +1248,7 @@ class StringX
 	}
 
 
-	// ◈ === singular »
+	// • === singular »
 	public static function singular($string)
 	{
 		return Str::singular($string);
@@ -1236,7 +1256,7 @@ class StringX
 
 
 
-	// ◈ === plural »
+	// • === plural »
 	public static function plural($string)
 	{
 		return Str::plural($string);
@@ -1244,7 +1264,7 @@ class StringX
 
 
 
-	// ◈ === words »
+	// • === words »
 	public static function words($string, $noOfWords)
 	{
 		return Str::words($string, $noOfWords);
@@ -1252,7 +1272,7 @@ class StringX
 
 
 
-	// ◈ === firstWord »
+	// • === firstWord »
 	public static function firstWord($string)
 	{
 		return Str::words($string, 1);
@@ -1260,7 +1280,7 @@ class StringX
 
 
 
-	// ◈ === wordCount »
+	// • === wordCount »
 	public static function wordCount($string)
 	{
 		return str_word_count($string, 0, '');
