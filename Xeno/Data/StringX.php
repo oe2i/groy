@@ -9,7 +9,7 @@ use Yale\Orig\Has;
 
 class StringX
 {
-	// • === is → is string » boolean
+	// • === is »
 	public static function is($string, $strict = false)
 	{
 		if ($strict === true) {
@@ -28,25 +28,61 @@ class StringX
 
 
 
-	// • ==== empty → is string & empty » boolean
-	public static function empty(&$string)
+	// • === length »
+	public static function length($string)
 	{
-		return self::is($string) && strlen($string) < 1;
+		if (self::is($string)) {
+			return strlen($string);
+		}
 	}
 
 
 
-	// • ==== encoded → $var is string & encoded » boolean
+	// • === empty → is string & empty » boolean
+	public static function empty($string)
+	{
+		return self::length($string) === 0;
+	}
+
+
+
+	// • === has → is string & not empty » boolean
+	public static function has($string)
+	{
+		return self::length($string) > 0;
+	}
+
+
+
+	// • === encoded → $var is string & encoded » boolean
 	public static function encoded($string)
 	{
-		// TODO: Improve code for number with +
-		if (!self::empty($string)) {
-			$decoded = urldecode($string);
-			if ($decoded !== $string) {
-				return true;
-			}
+		if (!self::has($string)) {
+			return false;
 		}
-		return false;
+
+		return new class($string) {
+			private string $string;
+
+
+			// ➝ construct »
+			public function __construct($string)
+			{
+				$this->string = $string;
+			}
+
+
+			// ➝ url » boolean
+			public function url()
+			{
+				$decoded = urldecode($this->string);
+				if ($decoded === $this->string) {
+					return false;
+				}
+				$encoded = urlencode($decoded);
+				return $encoded === $this->string;
+			}
+		};
 	}
 
 
@@ -54,7 +90,7 @@ class StringX
 	// • === in » boolean
 	public static function in($string, $needle, $case = true)
 	{
-		if (self::empty($string)) {
+		if (!self::has($string)) {
 			return false;
 		}
 
@@ -67,10 +103,10 @@ class StringX
 
 
 
-	// • ==== contain » boolean
+	// • === contain » boolean
 	public static function contain($string, $needle, $case = true)
 	{
-		if (self::empty($string)) {
+		if (!self::has($string)) {
 			return false;
 		}
 
@@ -89,9 +125,9 @@ class StringX
 
 
 	// • === containAny » boolean
-	public static function containAny($string, array $needles, $case = true): bool
+	public static function containAny($string, array $needles, $case = true)
 	{
-		if (self::empty($string)) {
+		if (!self::has($string)) {
 			return false;
 		}
 
@@ -117,65 +153,83 @@ class StringX
 
 
 
-	// • ==== compare → compare string » boolean
+	// • === compare » boolean
 	public static function compare($string, $needle, $strict = true)
 	{
-		if (self::is($string) && self::is($needle)) {
-			if (strtolower($string) == strtolower($needle) && !$strict) {
-				return true;
-			} elseif ($string === $needle && $strict) {
-				return true;
-			}
+		if (!self::has($string) || !self::has($needle)) {
+			return false;
 		}
-		return false;
+		return $strict ? $string === $needle : strtolower($string) == strtolower($needle);
 	}
 
 
 
-	// • ==== nth → nth character » string
+	// • === nth → nth character » string
 	public static function nth($string, $nth)
 	{
-		if (!self::empty($string) && is_numeric($nth)) {
-			$length = strlen($string);
-			if ($nth <= $length) {
-				$nth = (int) $nth - 1;
-				return $string[$nth];
-			}
+		if (!self::has($string)) {
+			return false;
 		}
-		return false;
+
+		if (!is_numeric($nth) || (int)$nth < 1) {
+			return false;
+		}
+
+		$nth = (int) $nth;
+		$length = strlen($string);
+
+		if ($nth > $length) {
+			return false;
+		}
+
+		return $string[$nth - 1];
 	}
 
 
 
-	// • ==== first → first character (nth) » string
-	public static function first($string, $nth = 1)
+	// • === first » string
+	public static function first($string)
 	{
-		if (!self::empty($string) && is_numeric($nth)) {
-			$length = strlen($string);
-			if ($nth <= $length) {
-				return substr($string, 0, $nth);
-			}
-		}
-		return false;
+		return self::nth($string, 1);
 	}
 
 
 
-	// • ==== last → last character (nth) » string
-	public static function last($string, $nth = 1)
+	// • === last » string
+	public static function last($string)
 	{
-		if (!self::empty($string) && is_numeric($nth)) {
-			$length = strlen($string);
-			if ($nth <= $length) {
-				return substr($string, -$nth);
-			}
+		if (!self::has($string)) {
+			return false;
 		}
-		return false;
+		return substr($string, -1);
 	}
 
 
 
-	// • ==== occurrence → count » boolean, number
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	// • === occurrence → count » boolean, number
 	public static function occurrence($string, $needle, $offset = 0, $length = null)
 	{
 		if (!self::empty($string)) {
@@ -223,7 +277,7 @@ class StringX
 
 
 
-	// • ==== swap → replacement »
+	// • === swap → replacement »
 	public static function swap($string, $needle, $substitute, $occurrence = 'all', $case = false)
 	{
 		if (self::in($string, $needle, $case)) {
@@ -274,7 +328,7 @@ class StringX
 
 
 
-	// • ==== swapFirst → replace first occurrence »
+	// • === swapFirst → replace first occurrence »
 	public static function swapFirst($string, $needle, $substitute = '', $case = false)
 	{
 		return self::swap($string, $needle, $substitute, 'first', $case);
@@ -282,7 +336,7 @@ class StringX
 
 
 
-	// • ==== swapLast → replace last occurrence »
+	// • === swapLast → replace last occurrence »
 	public static function swapLast($string, $needle, $substitute = '', $case = false)
 	{
 		return self::swap($string, $needle, $substitute, 'last', $case);
@@ -290,7 +344,7 @@ class StringX
 
 
 
-	// • ==== swapSpace → replace space character & vice-versa »
+	// • === swapSpace → replace space character & vice-versa »
 	public static function swapSpace($string, $needle, $inverse = false)
 	{
 		if (!self::empty($string) && self::is($needle)) {
@@ -306,7 +360,7 @@ class StringX
 
 
 
-	// • ==== singleSpace → ... » boolean
+	// • === singleSpace → ... » boolean
 	public static function singleSpace($string)
 	{
 		return preg_replace('/\s+/', ' ', $string);
@@ -314,14 +368,14 @@ class StringX
 
 
 
-	// • ==== noSpace → ... » boolean
+	// • === noSpace → ... » boolean
 	public static function noSpace($string)
 	{
 		return self::swap($string, ' ', '');
 	}
 
 
-	// • ==== noChar → remove special characters
+	// • === noChar → remove special characters
 	public static function noChar($string, $append = null)
 	{
 		if (!self::empty($string)) {
@@ -340,7 +394,7 @@ class StringX
 
 
 
-	// • ==== strip → remove from occurrence from string »
+	// • === strip → remove from occurrence from string »
 	public static function strip($string, $needle, $case = false)
 	{
 		return self::swap($string, $needle, '', 'all', $case);
@@ -348,7 +402,7 @@ class StringX
 
 
 
-	// • ==== stripFirst → remove from first occurrence from string »
+	// • === stripFirst → remove from first occurrence from string »
 	public static function stripFirst($string, $needle, $case = false)
 	{
 		return self::swapFirst($string, $needle, '', $case);
@@ -356,7 +410,7 @@ class StringX
 
 
 
-	// • ==== stripLast → remove from last occurrence from string »
+	// • === stripLast → remove from last occurrence from string »
 	public static function stripLast($string, $needle, $case = false)
 	{
 		return self::swapLast($string, $needle, '', $case);
@@ -384,7 +438,7 @@ class StringX
 
 
 
-	// • ==== crop → trim edges or character(s) »
+	// • === crop → trim edges or character(s) »
 	public static function crop($string, $needle = 'space', $case = false)
 	{
 		if (!self::empty($string) && !self::empty($needle)) {
@@ -401,7 +455,7 @@ class StringX
 
 
 
-	// • ==== cropBegin → remove beginning of string »
+	// • === cropBegin → remove beginning of string »
 	public static function cropBegin($string, $needle, $case = false)
 	{
 		if (self::beginWith($string, $needle)) {
@@ -419,7 +473,7 @@ class StringX
 
 
 
-	// • ==== cropEnd → remove end of string »
+	// • === cropEnd → remove end of string »
 	public static function cropEnd($string, $needle, $case = false)
 	{
 		if (self::endWith($string, $needle)) {
@@ -437,7 +491,7 @@ class StringX
 	}
 
 
-	// • ==== before → string before character
+	// • === before → string before character
 	public static function before($string, $needle, $strip = true, $case = false)
 	{
 		if (!self::empty($string) && self::in($string, $needle, $case)) {
@@ -461,7 +515,7 @@ class StringX
 
 
 
-	// • ==== beforeAs → string before character or the string
+	// • === beforeAs → string before character or the string
 	public static function beforeAs($string, $needle, $strip = true, $case = false)
 	{
 		$stringBefore = self::before($string, $needle, $strip, $case);
@@ -473,7 +527,7 @@ class StringX
 
 
 
-	// • ==== after → string after character
+	// • === after → string after character
 	public static function after($string, $needle, $strip = true, $case = false, $occurrence = 'FIRST')
 	{
 		if (!self::empty($string) && self::in($string, $needle, $case)) {
@@ -506,7 +560,7 @@ class StringX
 
 
 
-	// • ==== afterFirst → string after first occurrence of a character » string, false
+	// • === afterFirst → string after first occurrence of a character » string, false
 	public static function afterFirst($string, $needle, $strip = true, $case = false)
 	{
 		return self::after($string, $needle, $strip, $case, 'first');
@@ -514,7 +568,7 @@ class StringX
 
 
 
-	// • ==== afterLast → string after last occurrence of a character » string, false
+	// • === afterLast → string after last occurrence of a character » string, false
 	public static function afterLast($string, $needle, $strip = true, $case = false)
 	{
 		return self::after($string, $needle, $strip, $case, 'last');
@@ -522,7 +576,7 @@ class StringX
 
 
 
-	// • ==== afterAs → string after character or the string
+	// • === afterAs → string after character or the string
 	public static function afterAs($string, $needle, $strip = true, $case = false, $occurrence = 'FIRST')
 	{
 		$stringAfter = self::after($string, $needle, $strip, $case, $occurrence);
@@ -534,7 +588,7 @@ class StringX
 
 
 
-	// • ==== afterFirstAs → string after character or the string
+	// • === afterFirstAs → string after character or the string
 	public static function afterFirstAs($string, $needle, $strip = true, $case = false)
 	{
 		$stringAfter = self::afterFirst($string, $needle, $strip, $case);
@@ -546,7 +600,7 @@ class StringX
 
 
 
-	// • ==== afterLastAs → string after character or the string
+	// • === afterLastAs → string after character or the string
 	public static function afterLastAs($string, $needle, $strip = true, $case = false)
 	{
 		$stringAfter = self::afterLast($string, $needle, $strip, $case);
@@ -568,7 +622,7 @@ class StringX
 
 
 
-	// • ==== blur → blur censored character & vice-versa
+	// • === blur → blur censored character & vice-versa
 	public static function blur($string, $library, $blur = '***', $case = false)
 	{
 		if (!self::empty($string) && !empty($library)) {
@@ -598,7 +652,7 @@ class StringX
 	}
 
 
-	// • ==== isUppercase → is string upper case » boolean
+	// • === isUppercase → is string upper case » boolean
 	public static function isUppercase($string)
 	{
 		return Is::uppercase($string);
@@ -606,7 +660,7 @@ class StringX
 
 
 
-	// • ==== isLowercase → is string lower case » boolean
+	// • === isLowercase → is string lower case » boolean
 	public static function isLowercase($string)
 	{
 		return Is::lowercase($string);
@@ -614,7 +668,7 @@ class StringX
 
 
 
-	// • ==== isMixedcase → is string lower & upper case » boolean
+	// • === isMixedcase → is string lower & upper case » boolean
 	public static function isMixedcase($string)
 	{
 		return Is::mixedcase($string);
@@ -622,13 +676,13 @@ class StringX
 
 
 
-	// • ==== isNumbers → is string numbers » boolean
+	// • === isNumbers → is string numbers » boolean
 	public static function isNumber($string)
 	{
 		return Is::number($string);
 	}
 
-	// • ==== hasNumber → string contains numbers »
+	// • === hasNumber → string contains numbers »
 	public static function hasNumber($string)
 	{
 		return Has::number($string);
@@ -636,7 +690,7 @@ class StringX
 
 
 
-	// • ==== hasLetter → string contains letters »
+	// • === hasLetter → string contains letters »
 	public static function hasLetter($string)
 	{
 		return Has::letter($string);
@@ -644,7 +698,7 @@ class StringX
 
 
 
-	// • ==== hasSpace → string has space »
+	// • === hasSpace → string has space »
 	public static function hasSpace($string)
 	{
 		return Has::space($string);
@@ -652,7 +706,7 @@ class StringX
 
 
 
-	// • ==== hasNewline → string has newline »
+	// • === hasNewline → string has newline »
 	public static function hasNewline($string)
 	{
 		return Has::newline($string);
@@ -660,14 +714,14 @@ class StringX
 
 
 
-	// • ==== hasParagraph → string has multiple consecutive newline »
+	// • === hasParagraph → string has multiple consecutive newline »
 	public static function hasParagraph($string)
 	{
 		return Has::paragraph($string);
 	}
 
 
-	// • ==== begin → check string beginning » boolean
+	// • === begin → check string beginning » boolean
 	public static function beginWith($string, $begin)
 	{
 		if (!self::empty($string) && !self::empty($begin)) {
@@ -683,7 +737,7 @@ class StringX
 
 
 
-	// • ==== beginWithAny → check if string begin with anything in array or comma separated string » string, boolean
+	// • === beginWithAny → check if string begin with anything in array or comma separated string » string, boolean
 	public static function beginWithAny($string, $begins)
 	{
 
@@ -705,7 +759,7 @@ class StringX
 	}
 
 
-	// • ==== endWith → check string ending » boolean
+	// • === endWith → check string ending » boolean
 	public static function endWith($string, $end)
 	{
 		if (!self::empty($string) && !self::empty($end)) {
@@ -722,7 +776,7 @@ class StringX
 
 
 
-	// • ==== endWithAny → check if string ends with anything in array or comma separated string » string, boolean
+	// • === endWithAny → check if string ends with anything in array or comma separated string » string, boolean
 	public static function endWithAny($string, $endings)
 	{
 
@@ -754,7 +808,7 @@ class StringX
 
 
 
-	// • ==== match → match pattern » boolean, string, array
+	// • === match → match pattern » boolean, string, array
 	public static function match($string, $pattern, $return = 'boolean', $flags = 0, $offset = 0)
 	{
 
@@ -807,7 +861,7 @@ class StringX
 
 
 
-	// • ==== toObject → string to object »
+	// • === toObject → string to object »
 	public static function toObject($string, $separator, $keySeparator)
 	{
 		$pairs = explode($separator, trim($string));
@@ -826,7 +880,7 @@ class StringX
 
 
 
-	// • ==== toArray → string to array »
+	// • === toArray → string to array »
 	public static function toArray($string, $separator = null, $case = false)
 	{
 		if (!self::empty($string)) {
@@ -851,7 +905,7 @@ class StringX
 
 
 
-	// • ==== toUppercase →
+	// • === toUppercase →
 	public static function toUppercase($string)
 	{
 		if (self::is($string)) {
@@ -862,7 +916,7 @@ class StringX
 
 
 
-	// • ==== toLowercase →
+	// • === toLowercase →
 	public static function toLowercase($string)
 	{
 		if (self::is($string)) {
@@ -873,7 +927,7 @@ class StringX
 
 
 
-	// • ==== toSentenceCase →
+	// • === toSentenceCase →
 	public static function toSentenceCase($string)
 	{
 		if (self::is($string)) {
@@ -884,7 +938,7 @@ class StringX
 
 
 
-	// • ==== toSnakeCase →
+	// • === toSnakeCase →
 	public static function toSnakeCase($string, $separator = null)
 	{
 		if (!empty($separator)) {
@@ -905,7 +959,7 @@ class StringX
 
 
 
-	// • ==== toCamelCase →
+	// • === toCamelCase →
 	public static function toCamelCase($string, $separator = null)
 	{
 		if (!empty($separator)) {
@@ -927,7 +981,7 @@ class StringX
 
 
 
-	// • ==== toCapitalize →
+	// • === toCapitalize →
 	public static function toCapitalize($string)
 	{
 		return ucwords(self::toSentenceCase($string));
@@ -935,7 +989,7 @@ class StringX
 
 
 
-	// • ==== uppercaseCount →
+	// • === uppercaseCount →
 	public static function uppercaseCount($string)
 	{
 		$pattern = '/[A-Z]/';
@@ -944,7 +998,7 @@ class StringX
 
 
 
-	// • ==== uppercaseToSpace →
+	// • === uppercaseToSpace →
 	public static function uppercaseToSpace($string)
 	{
 		return preg_replace('/([a-z])([A-Z])/', '$1 $2', $string);
@@ -952,7 +1006,7 @@ class StringX
 
 
 
-	// • ==== getUppercase → get upper case letter & positions » array, boolean [false]
+	// • === getUppercase → get upper case letter & positions » array, boolean [false]
 	public static function getUppercase($string)
 	{
 		preg_match_all('/[A-Z]/', $string, $matches, PREG_OFFSET_CAPTURE);
@@ -969,7 +1023,7 @@ class StringX
 
 
 
-	// • ==== getLowercase → get lower case letter & positions » array, boolean [false]
+	// • === getLowercase → get lower case letter & positions » array, boolean [false]
 	public static function getLowercase($string)
 	{
 		preg_match_all('/[a-z]/', $string, $matches, PREG_OFFSET_CAPTURE);
