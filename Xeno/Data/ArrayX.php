@@ -6,6 +6,7 @@ use Illuminate\Support\Arr;
 use Groy\Xeno\Data\Array\MultiX;
 use Groy\Xeno\Data\Array\KeyX;
 use Groy\Xeno\Data\Array\ValueX;
+use Groy\Xeno\Data\Array\BlendX;
 
 class ArrayX
 {
@@ -106,41 +107,6 @@ class ArrayX
 
 
 
-	// • === multi → $var is multi-dimensional array » boolean
-	public static function multi($array = null)
-	{
-		if (!$array) {
-			return new MultiX;
-		}
-
-		if (self::has($array)) {
-			foreach ($array as $item) {
-				if (is_array($item)) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
-
-
-	// • === key »
-	public static function key()
-	{
-		return new KeyX;
-	}
-
-
-
-	// • === value »
-	public static function value()
-	{
-		return new ValueX;
-	}
-
-
-
 	// • === unique → prevent duplicate values »
 	public static function unique($array)
 	{
@@ -157,6 +123,24 @@ class ArrayX
 		}
 
 		return array_unique($array, SORT_REGULAR);
+	}
+
+
+
+	// • === as » convert and return as array
+	public static function as($var)
+	{
+		if (self::is($var)) {
+			return $var;
+		}
+
+		if (StringX::is($var)) {
+			return self::fromString($var);
+		}
+
+		if (ObjectX::is($var)) {
+			return ObjectX::toArray($var);
+		}
 	}
 
 
@@ -217,192 +201,196 @@ class ArrayX
 
 
 
-	// • === is »
+	// • === stripEmpty »
+	public static function stripEmpty($array)
+	{
+		return KeyX::stripEmpty($array);
+	}
 
 
 
-	// • === is »
+	// • === stripNull »
+	public static function stripNull($array)
+	{
+		return KeyX::stripNull($array);
+	}
 
 
 
-	// • === is »
+	// • === hasKeyValue »
+	public static function hasKeyValue($array, $key, $value, bool $strict = true): bool
+	{
+		if (!self::has($array)) {
+			return false;
+		}
 
+		$compare = function ($a, $b) use ($strict) {
+			return $strict ? $a === $b : $a == $b;
+		};
 
+		if (MultiX::keyNumeric($array)) {
+			$array = array_filter($array, function ($row) use ($key, $value, $compare) {
+				return is_array($row) && array_key_exists($key, $row) && $compare($row[$key], $value);
+			});
+			return !empty($array);
+		}
 
-	// • === is »
+		return array_key_exists($key, $array) && $compare($array[$key], $value);
+	}
 
 
 
-	// • === is »
+	// • === fromString » convert string to array
+	public static function fromString($string, $delimiter = null, $case = false)
+	{
+		if (!StringX::is($string)) {
+			return false;
+		}
 
+		if (!$delimiter) {
+			$delimiter = match (true) {
+				StringX::contain($string, ',', $case) => ',',
+				StringX::contain($string, '|', $case) => '|',
+				StringX::contain($string, ';', $case) => ';',
+				StringX::contain($string, 'space', $case) => 'space',
+				default => null,
+			};
+		}
+		if ($delimiter) {
+			return StringX::toArray($string, $delimiter, $case);
+		}
 
+		return false;
+	}
 
-	// • === is »
 
 
+	// • === joinString » merge/append string to array
+	public static function joinString($array, $string, $delimiter = null, $case = false)
+	{
+		if (!self::is($array) || !StringX::is($string)) {
+			return false;
+		}
 
-	// • === is »
+		$stringArray = self::fromString($string, $delimiter, $case);
+		if (is_array($stringArray)) {
+			return array_merge($array, $stringArray);
+		}
 
+		array_push($array, $string);
+		return $array;
+	}
 
 
-	// • === is »
 
+	// • === extend » merge/append $argument [$array|$key, $value] to array
+	public static function extend($array, ...$argument)
+	{
+		if (!self::is($array)) {
+			return false;
+		}
 
+		$count = count($argument);
 
-	// • === is »
+		if ($count === 1) {
+			$entry = $argument[0];
 
+			if (StringX::is($entry)) {
+				return self::joinString($array, $entry);
+			}
 
+			array_push($array, $entry);
+			return $array;
+		}
 
-	// • === is »
+		if ($count === 2) {
+			$key = $argument[0];
+			$value = $argument[1];
 
+			if (StringX::is($key)) {
+				$array = array_merge($array, [$key => $value]);
+			}
+		}
 
+		return $array;
+	}
 
-	// • === is »
 
 
+	// • === key »
+	public static function key()
+	{
+		return new KeyX;
+	}
 
-	// • === is »
 
 
+	// • === value »
+	public static function value()
+	{
+		return new ValueX;
+	}
 
-	// • === is »
 
 
+	// • === multi → $var is multi-dimensional array » boolean
+	public static function multi($array = null)
+	{
+		if (!$array) {
+			return new MultiX;
+		}
 
-	// • === is »
+		if (self::has($array)) {
+			foreach ($array as $item) {
+				if (is_array($item)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 
 
 
-	// • === is »
+	public static function blend($array, $blend)
+	{
+		return BlendX::handle($array, $blend);
+	}
 
 
 
-	// • === is »
+	// • === increment → count & increment » array
+	public static function increment($array, string $prefix = '', string $suffix = '', $behavior = 'append')
+	{
+		if (!self::has($array)) {
+			return false;
+		}
+		$count = count($array);
+		$increment = $count + 1;
 
+		$string = $prefix . $increment . $suffix;
 
+		if ($behavior === 'prepend') {
+			array_unshift($array, $string);
+		} else {
+			$array[] = $string;
+		}
 
-	// • === is »
+		return $array;
+	}
 
 
 
-	// • === is »
-
-
-
-	// • === is »
-
-
-
-	// • === is »
-
-
-
-	// • === is »
-
-
-
-	// • === is »
-
-
-
-	// • === is »
-
-
-
-	// • === is »
-
-
-
-	// • === is »
-
-
-
-	// • === is »
-
-
-
-	// • === is »
-
-
-
-	// • === is »
-
-
-
-	// • === is »
-
-
-
-	// • === is »
-
-
-
-	// • === is »
-
-
-
-	// • === is »
-
-
-	// • === is »
-
-
-
-	// • === is »
-
-
-
-	// • === is »
-
-
-
-	// • === is »
-
-
-
-	// • === is »
-
-
-
-	// • === is »
-
-
-
-	// • === is »
-
-
-
-	// • === is »
-
-
-	// • === is »
-
-
-
-	// • === is »
-
-
-
-	// • === is »
-
-
-
-	// • === is »
-
-
-
-	// • === is »
-
-
-
-	// • === is »
-
-
-
-	// • === is »
-
-
-
-	// • === is »
-
+	// • === decrement → count & remove last element from array » array
+	public static function decrement($array)
+	{
+		if (!self::has($array)) {
+			return false;
+		}
+		$count = count($array);
+		if ($count > 0) {
+			array_pop($array);
+		}
+		return $array;
+	}
 } //> end of class ~ ArrayX
