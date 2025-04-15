@@ -2,7 +2,9 @@
 
 namespace Groy\Xeno\Data\Array;
 
+use Groy\Spine\Core\VarX;
 use Groy\Xeno\Data\ArrayX;
+use Groy\Xeno\Data\StringX;
 
 class KeyX
 {
@@ -176,7 +178,46 @@ class KeyX
 
 
 
-	// • === stripNull → remove key with no value from array »
+	// • === strip » remove from array using key
+	public static function strip($array, int|string|array $key)
+	{
+		if (!ArrayX::has($array)) {
+			return false;
+		}
+
+		if (is_array($key)) {
+			foreach ($key as $index => $value) {
+				if (isset($array[$index])) {
+					unset($array[$index]);
+				}
+			}
+		}
+
+		if (self::is($array, $key)) {
+			unset($array[$key]);
+		}
+
+		return $array;
+	}
+
+
+
+	// • === stripEmpty »
+	public static function stripEmpty($array)
+	{
+		if (ArrayX::has($array)) {
+			foreach ($array as $key => $value) {
+				if (VarX::empty($value)) {
+					unset($array[$key]);
+				}
+			}
+		}
+		return $array;
+	}
+
+
+
+	// • === stripNull »
 	public static function stripNull($array)
 	{
 		if (ArrayX::has($array)) {
@@ -184,6 +225,25 @@ class KeyX
 				if (is_null($value)) {
 					unset($array[$key]);
 				}
+			}
+		}
+		return $array;
+	}
+
+
+
+	// • === toNull »
+	public static function toNull($array, $keys)
+	{
+		if (ArrayX::has($array)) {
+			if (is_array($keys)) {
+				foreach ($keys as $key) {
+					if (array_key_exists($key, $array)) {
+						$array[$key] = null;
+					}
+				}
+			} elseif (array_key_exists($keys, $array)) {
+				$array[$keys] = null;
 			}
 		}
 		return $array;
@@ -223,5 +283,124 @@ class KeyX
 		}
 
 		return $reArray;
+	}
+
+
+
+	// • === useless → (isNotOrEmpty) is not a key or has empty value »
+	public static function useless($array, $key)
+	{
+		if (self::isNot($array, $key) || self::empty($array, $key)) {
+			return true;
+		}
+		return false;
+	}
+
+
+
+	// • === filter » get specific keys, optionally handle values (missing, empty, boolean, match).
+	public static function filter(array $array, $filter, null|string|bool $remove = null): array
+	{
+		$reArray = [];
+		$keys = ArrayX::as($filter);
+
+		foreach ($keys as $key) {
+			$reArray[$key] = array_key_exists($key, $array) ? $array[$key] : '';
+		}
+
+		if ($remove === 'empty') {
+			foreach ($reArray as $key => $value) {
+				if (StringX::empty($value)) {
+					unset($reArray[$key]);
+				}
+			}
+		}
+
+		if ($remove === 'unset') {
+			foreach ($reArray as $key => $value) {
+				if (!array_key_exists($key, $array)) {
+					unset($reArray[$key]);
+				}
+			}
+		}
+
+		if ($remove === 'false' || $remove === false) {
+			foreach ($reArray as $key => $value) {
+				if (is_bool($value) && $value === false) {
+					unset($reArray[$key]);
+				}
+			}
+		}
+
+		if ($remove === 'true' || $remove === true) {
+			foreach ($reArray as $key => $value) {
+				if (is_bool($value) && $value === true) {
+					unset($reArray[$key]);
+				}
+			}
+		}
+
+		if (!empty($remove)) {
+			foreach ($reArray as $key => $value) {
+				if ($value === $remove) {
+					unset($reArray[$key]);
+				}
+			}
+		}
+
+		return $reArray;
+	}
+
+
+
+	// • === extract → extract specific keys, optionally rename, and remove those keys from original array »
+	public static function extract(array &$array, $param): array
+	{
+		$extract = [];
+
+		if (empty($array) || empty($param)) {
+			return $extract;
+		}
+
+		if (!is_array($param)) {
+			if (array_key_exists($param, $array)) {
+				$extract[$param] = $array[$param];
+				unset($array[$param]);
+			}
+		} else {
+			foreach ($param as $key => $value) {
+				// If numeric key, value is the actual key to extract
+				if (is_numeric($key)) {
+					if (array_key_exists($value, $array)) {
+						$extract[$value] = $array[$value];
+						unset($array[$value]);
+					}
+				} else {
+					// Associative: rename key
+					if (array_key_exists($key, $array)) {
+						$extract[$value] = $array[$key];
+						unset($array[$key]);
+					}
+				}
+			}
+		}
+
+		return $extract;
+	}
+
+
+
+	// • === byValue → find key by the value in array »
+	public static function byValue($array, $value, $strict = false)
+	{
+		return array_search($value, $array, $strict);
+	}
+
+
+
+	// • === byValues → find key by the values in array »
+	public static function byValues($array, $values, $strict = false)
+	{
+		return array_keys($array, $values,  $strict);
 	}
 } //> end of class ~ KeyX
