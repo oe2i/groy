@@ -6,18 +6,19 @@ use Illuminate\Support\Str;
 use Yale\Orig\Is;
 use Yale\Orig\Can;
 use Yale\Orig\Has;
+
 class StringX
 {
 	// • === is → is string » boolean
-	public static function is($var, $strict = false)
+	public static function is($string, $strict = false)
 	{
 		if ($strict === true) {
-			return is_string($var);
-		} elseif (is_string($var)) {
+			return is_string($string);
+		} elseif (is_string($string)) {
 			return true;
-		} elseif (!is_null($var)) {
+		} elseif (!is_null($string)) {
 			$types = ['string', 'integer', 'double', 'numeric'];
-			$type = gettype($var);
+			$type = gettype($string);
 			if (in_array($type, $types)) {
 				return true;
 			}
@@ -28,9 +29,9 @@ class StringX
 
 
 	// • ==== empty → is string & empty » boolean
-	public static function empty(&$var)
+	public static function empty(&$string)
 	{
-		return self::is($var) && strlen($var) < 1;
+		return self::is($string) && strlen($string) < 1;
 	}
 
 
@@ -50,43 +51,67 @@ class StringX
 
 
 
-	// • ==== in • check in string » boolean
-	public static function in($string, $needle, $strictCase = true)
+	// • === in » boolean
+	public static function in($string, $needle, $case = true)
 	{
 		if (self::empty($string)) {
 			return false;
 		}
 
-		if ($strictCase) {
-			if ($needle === $string) {
-				return true;
-			} elseif (strpos($string, $needle) !== false) {
-				return true;
-			}
-		} else {
-			if ($needle == $string) {
-				return true;
-			} elseif (stripos($string, $needle) !== false) {
-				return true;
-			}
+		if ($case) {
+			return $needle === $string || strpos($string, $needle) !== false;
 		}
 
-		return false;
+		return $needle == $string || stripos($string, $needle) !== false;
 	}
 
 
 
-	// • ==== contain → check in string (case insensitive) » boolean
-	public static function contain($string, $needle)
+	// • ==== contain » boolean
+	public static function contain($string, $needle, $case = true)
 	{
-		if (!self::empty($string)) {
-			if (strtolower($needle) === 'space' && strpos($string, ' ') !== false) {
-				return true;
+		if (self::empty($string)) {
+			return false;
+		}
+
+		if (strtolower($needle) === 'space') {
+			return strpos($string, ' ') !== false;
+		}
+
+		if (!$case) {
+			$string = strtolower($string);
+			$needle = strtolower($needle);
+		}
+
+		return str_contains($string, $needle);
+	}
+
+
+
+	// • === containAny » boolean
+	public static function containAny($string, array $needles, $case = true): bool
+	{
+		if (self::empty($string)) {
+			return false;
+		}
+
+		if (!$case) {
+			$string = strtolower($string);
+			$needles = array_map('strtolower', $needles);
+		}
+
+		array_walk($needles, function (&$item) {
+			if (strtolower($item) === 'space') {
+				$item = ' ';
 			}
-			if (self::in($string, $needle, false)) {
+		});
+
+		foreach ($needles as $needle) {
+			if (str_contains($string, $needle)) {
 				return true;
 			}
 		}
+
 		return false;
 	}
 
@@ -165,59 +190,59 @@ class StringX
 
 
 
-// ◈ === occurrenceNth » get position of nth occurrence
-public static function occurrenceNth($string, $character, $nth)
-{
-	$position = -1;
-	while ($nth > 0) {
-		$position = strpos($string, $character, $position + 1);
-		if ($position === false) {
-			return false;
+	// ◈ === occurrenceNth » get position of nth occurrence
+	public static function occurrenceNth($string, $character, $nth)
+	{
+		$position = -1;
+		while ($nth > 0) {
+			$position = strpos($string, $character, $position + 1);
+			if ($position === false) {
+				return false;
+			}
+			$nth--;
 		}
-		$nth--;
+		return $position;
 	}
-	return $position;
-}
 
 
 
-// ◈ === occurrenceGroupNth »
-// TODO: understand code and purpose, I wrote this a long time ago
-public static function occurrenceGroupNth($string, $separator, $nth, $req = 'nth')
-{
-	$occurrence = [];
-	$parts = explode($separator, $string);
-	for ($i = 0; $i < count($parts); $i = $i + $nth) {
-		$occurrence[] = implode($separator, array_slice($parts, $i, $i + $nth));
+	// ◈ === occurrenceGroupNth »
+	// TODO: understand code and purpose, I wrote this a long time ago
+	public static function occurrenceGroupNth($string, $separator, $nth, $req = 'nth')
+	{
+		$occurrence = [];
+		$parts = explode($separator, $string);
+		for ($i = 0; $i < count($parts); $i = $i + $nth) {
+			$occurrence[] = implode($separator, array_slice($parts, $i, $i + $nth));
+		}
+		if (strtolower($req) === 'nth') {
+			return $occurrence[$nth - 1];
+		}
+		return $occurrence;
 	}
-	if (strtolower($req) === 'nth') {
-		return $occurrence[$nth - 1];
-	}
-	return $occurrence;
-}
 
 
 
 	// • ==== swap → replacement »
-	public static function swap($string, $needle, $substitute, $occurrence = 'all', $strictCase = false)
+	public static function swap($string, $needle, $substitute, $occurrence = 'all', $case = false)
 	{
-		if (self::in($string, $needle, $strictCase)) {
+		if (self::in($string, $needle, $case)) {
 			if (strtolower($occurrence) === 'all') {
-				if ($strictCase) {
+				if ($case) {
 					$string = str_replace($needle, $substitute, $string);
 				} else {
 					$string = str_ireplace($needle, $substitute, $string);
 				}
 			} else {
 				if (strtolower($occurrence) === 'first') {
-					if ($strictCase) {
+					if ($case) {
 						$pos = strpos($string, $needle);
 					} else {
 						$pos = stripos($string, $needle);
 					}
 				}
 				if (strtolower($occurrence) === 'last') {
-					if ($strictCase) {
+					if ($case) {
 						$pos = strrpos($string, $needle);
 					} else {
 						$pos = strripos($string, $needle);
@@ -250,17 +275,17 @@ public static function occurrenceGroupNth($string, $separator, $nth, $req = 'nth
 
 
 	// • ==== swapFirst → replace first occurrence »
-	public static function swapFirst($string, $needle, $substitute = '', $strictCase = false)
+	public static function swapFirst($string, $needle, $substitute = '', $case = false)
 	{
-		return self::swap($string, $needle, $substitute, 'first', $strictCase);
+		return self::swap($string, $needle, $substitute, 'first', $case);
 	}
 
 
 
 	// • ==== swapLast → replace last occurrence »
-	public static function swapLast($string, $needle, $substitute = '', $strictCase = false)
+	public static function swapLast($string, $needle, $substitute = '', $case = false)
 	{
-		return self::swap($string, $needle, $substitute, 'last', $strictCase);
+		return self::swap($string, $needle, $substitute, 'last', $case);
 	}
 
 
@@ -315,35 +340,27 @@ public static function occurrenceGroupNth($string, $separator, $nth, $req = 'nth
 
 
 
-
-
-
-
 	// • ==== strip → remove from occurrence from string »
-	public static function strip($string, $needle, $strictCase = false)
+	public static function strip($string, $needle, $case = false)
 	{
-		return self::swap($string, $needle, '', 'all', $strictCase);
+		return self::swap($string, $needle, '', 'all', $case);
 	}
-
 
 
 
 	// • ==== stripFirst → remove from first occurrence from string »
-	public static function stripFirst($string, $needle, $strictCase = false)
+	public static function stripFirst($string, $needle, $case = false)
 	{
-		return self::swapFirst($string, $needle, '', $strictCase);
+		return self::swapFirst($string, $needle, '', $case);
 	}
-
 
 
 
 	// • ==== stripLast → remove from last occurrence from string »
-	public static function stripLast($string, $needle, $strictCase = false)
+	public static function stripLast($string, $needle, $case = false)
 	{
-		return self::swapLast($string, $needle, '', $strictCase);
+		return self::swapLast($string, $needle, '', $case);
 	}
-
-
 
 
 
@@ -367,15 +384,13 @@ public static function occurrenceGroupNth($string, $separator, $nth, $req = 'nth
 
 
 
-
-
 	// • ==== crop → trim edges or character(s) »
-	public static function crop($string, $needle = 'space', $strictCase = false)
+	public static function crop($string, $needle = 'space', $case = false)
 	{
 		if (!self::empty($string) && !self::empty($needle)) {
 			if (strtolower($needle) === 'space') {
 				return trim($string);
-			} elseif (self::in($string, $needle, $strictCase)) {
+			} elseif (self::in($string, $needle, $case)) {
 				$string = trim($string);
 				return trim($string, $needle);
 			}
@@ -386,12 +401,11 @@ public static function occurrenceGroupNth($string, $separator, $nth, $req = 'nth
 
 
 
-
 	// • ==== cropBegin → remove beginning of string »
-	public static function cropBegin($string, $needle, $strictCase = false)
+	public static function cropBegin($string, $needle, $case = false)
 	{
 		if (self::beginWith($string, $needle)) {
-			return self::stripFirst($string, $needle, $strictCase);
+			return self::stripFirst($string, $needle, $case);
 		}
 		return $string;
 	}
@@ -406,10 +420,10 @@ public static function occurrenceGroupNth($string, $separator, $nth, $req = 'nth
 
 
 	// • ==== cropEnd → remove end of string »
-	public static function cropEnd($string, $needle, $strictCase = false)
+	public static function cropEnd($string, $needle, $case = false)
 	{
 		if (self::endWith($string, $needle)) {
-			return self::stripLast($string, $needle, $strictCase);
+			return self::stripLast($string, $needle, $case);
 		}
 		return $string;
 	}
@@ -424,10 +438,10 @@ public static function occurrenceGroupNth($string, $separator, $nth, $req = 'nth
 
 
 	// • ==== before → string before character
-	public static function before($string, $needle, $strip = true, $strictCase = false)
+	public static function before($string, $needle, $strip = true, $case = false)
 	{
-		if (!self::empty($string) && self::in($string, $needle, $strictCase)) {
-			if (!$strictCase) {
+		if (!self::empty($string) && self::in($string, $needle, $case)) {
+			if (!$case) {
 				$pos = stripos($string, $needle);
 			} else {
 				$pos = strpos($string, $needle);
@@ -447,12 +461,10 @@ public static function occurrenceGroupNth($string, $separator, $nth, $req = 'nth
 
 
 
-
-
 	// • ==== beforeAs → string before character or the string
-	public static function beforeAs($string, $needle, $strip = true, $strictCase = false)
+	public static function beforeAs($string, $needle, $strip = true, $case = false)
 	{
-		$stringBefore = self::before($string, $needle, $strip, $strictCase);
+		$stringBefore = self::before($string, $needle, $strip, $case);
 		if ($stringBefore === false) {
 			return $string;
 		}
@@ -461,22 +473,20 @@ public static function occurrenceGroupNth($string, $separator, $nth, $req = 'nth
 
 
 
-
-
 	// • ==== after → string after character
-	public static function after($string, $needle, $strip = true, $strictCase = false, $occurrence = 'FIRST')
+	public static function after($string, $needle, $strip = true, $case = false, $occurrence = 'FIRST')
 	{
-		if (!self::empty($string) && self::in($string, $needle, $strictCase)) {
-			if ($strictCase) {
+		if (!self::empty($string) && self::in($string, $needle, $case)) {
+			if ($case) {
 				$string = strstr($string, $needle);
 			} else {
 				$string = stristr($string, $needle);
 			}
 			if ($string !== false) {
 				if ($strip === true && $occurrence === 'FIRST') {
-					$string = self::swapFirst($string, $needle, '', $strictCase);
+					$string = self::swapFirst($string, $needle, '', $case);
 				} elseif ($occurrence === 'LAST') {
-					if ($strictCase) {
+					if ($case) {
 						$pos = strrpos($string, $needle);
 					} else {
 						$pos = strripos($string, $needle);
@@ -496,30 +506,26 @@ public static function occurrenceGroupNth($string, $separator, $nth, $req = 'nth
 
 
 
-
-
 	// • ==== afterFirst → string after first occurrence of a character » string, false
-	public static function afterFirst($string, $needle, $strip = true, $strictCase = false)
+	public static function afterFirst($string, $needle, $strip = true, $case = false)
 	{
-		return self::after($string, $needle, $strip, $strictCase, 'first');
+		return self::after($string, $needle, $strip, $case, 'first');
 	}
 
 
 
 	// • ==== afterLast → string after last occurrence of a character » string, false
-	public static function afterLast($string, $needle, $strip = true, $strictCase = false)
+	public static function afterLast($string, $needle, $strip = true, $case = false)
 	{
-		return self::after($string, $needle, $strip, $strictCase, 'last');
+		return self::after($string, $needle, $strip, $case, 'last');
 	}
 
 
 
-
-
 	// • ==== afterAs → string after character or the string
-	public static function afterAs($string, $needle, $strip = true, $strictCase = false, $occurrence = 'FIRST')
+	public static function afterAs($string, $needle, $strip = true, $case = false, $occurrence = 'FIRST')
 	{
-		$stringAfter = self::after($string, $needle, $strip, $strictCase, $occurrence);
+		$stringAfter = self::after($string, $needle, $strip, $case, $occurrence);
 		if ($stringAfter === false) {
 			return $string;
 		}
@@ -528,33 +534,27 @@ public static function occurrenceGroupNth($string, $separator, $nth, $req = 'nth
 
 
 
-
-
 	// • ==== afterFirstAs → string after character or the string
-	public static function afterFirstAs($string, $needle, $strip = true, $strictCase = false)
+	public static function afterFirstAs($string, $needle, $strip = true, $case = false)
 	{
-		$stringAfter = self::afterFirst($string, $needle, $strip, $strictCase);
+		$stringAfter = self::afterFirst($string, $needle, $strip, $case);
 		if (!$stringAfter) {
 			return $string;
 		}
 		return $stringAfter;
 	}
-
-
 
 
 
 	// • ==== afterLastAs → string after character or the string
-	public static function afterLastAs($string, $needle, $strip = true, $strictCase = false)
+	public static function afterLastAs($string, $needle, $strip = true, $case = false)
 	{
-		$stringAfter = self::afterLast($string, $needle, $strip, $strictCase);
+		$stringAfter = self::afterLast($string, $needle, $strip, $case);
 		if (!$stringAfter) {
 			return $string;
 		}
 		return $stringAfter;
 	}
-
-
 
 
 
@@ -568,11 +568,8 @@ public static function occurrenceGroupNth($string, $separator, $nth, $req = 'nth
 
 
 
-
-
-
 	// • ==== blur → blur censored character & vice-versa
-	public static function blur($string, $library, $blur = '***', $strictCase = false)
+	public static function blur($string, $library, $blur = '***', $case = false)
 	{
 		if (!self::empty($string) && !empty($library)) {
 			$words = explode(" ", $string);
@@ -592,7 +589,7 @@ public static function occurrenceGroupNth($string, $separator, $nth, $req = 'nth
 			}
 			foreach ($words as $word) {
 				if (in_array(strtolower($word), array_map('strtolower', $library))) {
-					$string = self::swap($string, $word, $blur, 'all', $strictCase);
+					$string = self::swap($string, $word, $blur, 'all', $case);
 				}
 			}
 			return $string;
@@ -609,7 +606,6 @@ public static function occurrenceGroupNth($string, $separator, $nth, $req = 'nth
 
 
 
-
 	// • ==== isLowercase → is string lower case » boolean
 	public static function isLowercase($string)
 	{
@@ -618,13 +614,11 @@ public static function occurrenceGroupNth($string, $separator, $nth, $req = 'nth
 
 
 
-
 	// • ==== isMixedcase → is string lower & upper case » boolean
 	public static function isMixedcase($string)
 	{
 		return Is::mixedcase($string);
 	}
-
 
 
 
@@ -642,15 +636,11 @@ public static function occurrenceGroupNth($string, $separator, $nth, $req = 'nth
 
 
 
-
-
 	// • ==== hasLetter → string contains letters »
 	public static function hasLetter($string)
 	{
 		return Has::letter($string);
 	}
-
-
 
 
 
@@ -662,15 +652,11 @@ public static function occurrenceGroupNth($string, $separator, $nth, $req = 'nth
 
 
 
-
-
 	// • ==== hasNewline → string has newline »
 	public static function hasNewline($string)
 	{
 		return Has::newline($string);
 	}
-
-
 
 
 
@@ -694,8 +680,6 @@ public static function occurrenceGroupNth($string, $separator, $nth, $req = 'nth
 		}
 		return false;
 	}
-
-
 
 
 
@@ -738,8 +722,6 @@ public static function occurrenceGroupNth($string, $separator, $nth, $req = 'nth
 
 
 
-
-
 	// • ==== endWithAny → check if string ends with anything in array or comma separated string » string, boolean
 	public static function endWithAny($string, $endings)
 	{
@@ -769,7 +751,6 @@ public static function occurrenceGroupNth($string, $separator, $nth, $req = 'nth
 	{
 		return preg_match('/(\r?\n)$/', $string);
 	}
-
 
 
 
@@ -826,7 +807,6 @@ public static function occurrenceGroupNth($string, $separator, $nth, $req = 'nth
 
 
 
-
 	// • ==== toObject → string to object »
 	public static function toObject($string, $separator, $keySeparator)
 	{
@@ -846,11 +826,8 @@ public static function occurrenceGroupNth($string, $separator, $nth, $req = 'nth
 
 
 
-
-
-
 	// • ==== toArray → string to array »
-	public static function toArray($string, $separator = null)
+	public static function toArray($string, $separator = null, $case = false)
 	{
 		if (!self::empty($string)) {
 			if (is_null($separator)) {
@@ -874,7 +851,6 @@ public static function occurrenceGroupNth($string, $separator, $nth, $req = 'nth
 
 
 
-
 	// • ==== toUppercase →
 	public static function toUppercase($string)
 	{
@@ -883,7 +859,6 @@ public static function occurrenceGroupNth($string, $separator, $nth, $req = 'nth
 		}
 		return false;
 	}
-
 
 
 
@@ -898,7 +873,6 @@ public static function occurrenceGroupNth($string, $separator, $nth, $req = 'nth
 
 
 
-
 	// • ==== toSentenceCase →
 	public static function toSentenceCase($string)
 	{
@@ -907,8 +881,6 @@ public static function occurrenceGroupNth($string, $separator, $nth, $req = 'nth
 		}
 		return false;
 	}
-
-
 
 
 
@@ -930,8 +902,6 @@ public static function occurrenceGroupNth($string, $separator, $nth, $req = 'nth
 		$string = preg_replace('/(.)(?=[A-Z])/u', '$1_', $string);
 		return strtolower($string);
 	}
-
-
 
 
 
@@ -957,15 +927,11 @@ public static function occurrenceGroupNth($string, $separator, $nth, $req = 'nth
 
 
 
-
-
 	// • ==== toCapitalize →
 	public static function toCapitalize($string)
 	{
 		return ucwords(self::toSentenceCase($string));
 	}
-
-
 
 
 
@@ -978,15 +944,11 @@ public static function occurrenceGroupNth($string, $separator, $nth, $req = 'nth
 
 
 
-
-
 	// • ==== uppercaseToSpace →
 	public static function uppercaseToSpace($string)
 	{
 		return preg_replace('/([a-z])([A-Z])/', '$1 $2', $string);
 	}
-
-
 
 
 
@@ -1004,8 +966,6 @@ public static function occurrenceGroupNth($string, $separator, $nth, $req = 'nth
 		}
 		return false;
 	}
-
-
 
 
 
@@ -1041,7 +1001,6 @@ public static function occurrenceGroupNth($string, $separator, $nth, $req = 'nth
 			return $var;
 		}
 	}
-
 
 
 
@@ -1098,30 +1057,29 @@ public static function occurrenceGroupNth($string, $separator, $nth, $req = 'nth
 	}
 
 
-		// ◈ === countWords »
-		public static function count($string, $option = 'string')
-		{
-			if (self::is($string)) {
-				if ($option === 'string') {
-					return strlen($string);
-				} elseif ($option === 'words') {
-					return str_word_count($string);
-				}
+	// ◈ === countWords »
+	public static function count($string, $option = 'string')
+	{
+		if (self::is($string)) {
+			if ($option === 'string') {
+				return strlen($string);
+			} elseif ($option === 'words') {
+				return str_word_count($string);
 			}
-			return false;
 		}
+		return false;
+	}
 
 
 
+	// ◈ === countWord »
+	public static function countWord($string)
+	{
+		return self::count($string, 'words');
+	}
 
-		// ◈ === countWord »
-		public static function countWord($string)
-		{
-			return self::count($string, 'words');
-		}
 
-
-			// ◈ === camelCase →
+	// ◈ === camelCase →
 	public static function camelCase($string, $separator = null, $strip = true)
 	{
 		if (!empty($separator)) {
