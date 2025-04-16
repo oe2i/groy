@@ -426,7 +426,7 @@ class StringX
 	// • === toArray → string to array »
 	public static function toArray($string, $separator = null, $case = false)
 	{
-		if (!StringX::has($string)) {
+		if (HasX::nothing($string)) {
 			return false;
 		}
 
@@ -450,7 +450,7 @@ class StringX
 	// • === toObject → string to object »
 	public static function toObject($string, $separator, $keySeparator)
 	{
-		if (!StringX::has($string) || !self::is($separator)) {
+		if (HasX::nothing($string) || !self::is($separator)) {
 			return false;
 		}
 
@@ -764,12 +764,5 @@ class StringX
 			}
 		}
 		return false;
-	}
-
-
-	// • === toCapitalize →
-	public static function toCapitalize($string)
-	{
-		return ucwords(self::toSentenceCase($string));
 	}
 } //> end of class ~ StringX

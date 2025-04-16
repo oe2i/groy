@@ -9,7 +9,7 @@ class EndX
 	// • === with → check string ending » boolean
 	public static function with($string, $end, $case = true)
 	{
-		if (!StringX::has($string) || !StringX::has($end)) {
+		if (HasX::nothing($string) || HasX::nothing($end)) {
 			return false;
 		}
 
@@ -37,7 +37,7 @@ class EndX
 	// • === withAny → check if string end with anything in array or comma separated string » string, boolean
 	public static function withAny($string, $end, $case = false)
 	{
-		if (!StringX::has($string) || empty($end)) {
+		if (HasX::nothing($string) || empty($end)) {
 			return false;
 		}
 
@@ -67,7 +67,7 @@ class EndX
 	// • === newline » check if string ends with newline
 	public static function newline($string)
 	{
-		if (!StringX::has($string)) {
+		if (HasX::nothing($string)) {
 			return false;
 		}
 		return preg_match('/(\r?\n)$/', $string);

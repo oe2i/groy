@@ -10,7 +10,7 @@ class WordX
 	// • === firstWord »
 	public static function first($string)
 	{
-		if (!StringX::has($string)) {
+		if (HasX::nothing($string)) {
 			return false;
 		}
 		return Str::words($string, 1);
@@ -21,7 +21,7 @@ class WordX
 	// • === count »
 	public static function count($string)
 	{
-		if (!StringX::has($string)) {
+		if (HasX::nothing($string)) {
 			return false;
 		}
 		return str_word_count($string);
@@ -32,7 +32,7 @@ class WordX
 	// • === limit » limit number of words
 	public static function limit($string, $noOfWords)
 	{
-		if (!StringX::has($string) || !is_numeric($noOfWords)) {
+		if (HasX::nothing($string) || !is_numeric($noOfWords)) {
 			return false;
 		}
 

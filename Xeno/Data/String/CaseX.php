@@ -10,7 +10,7 @@ class CaseX
 	// • === lower »
 	public static function lower($string)
 	{
-		if (!StringX::has($string)) {
+		if (HasX::nothing($string)) {
 			return strtolower(trim($string));
 		}
 		return false;
@@ -21,7 +21,7 @@ class CaseX
 	// • === upper »
 	public static function upper($string)
 	{
-		if (!StringX::has($string)) {
+		if (HasX::nothing($string)) {
 			return false;
 		}
 		return strtoupper($string);
@@ -32,7 +32,7 @@ class CaseX
 	// • === sentence →
 	public static function sentence($string, $acronym = true, $caps = true)
 	{
-		if (!StringX::has($string)) {
+		if (HasX::nothing($string)) {
 			return false;
 		}
 
@@ -67,7 +67,7 @@ class CaseX
 	// • === snake →
 	public static function snake($string, $separator = null)
 	{
-		if (!StringX::has($string)) {
+		if (HasX::nothing($string)) {
 			return false;
 		}
 
@@ -115,7 +115,7 @@ class CaseX
 	// • === capitalize →
 	public static function capitalize($string, $separator = null)
 	{
-		if (!StringX::has($string)) {
+		if (HasX::nothing($string)) {
 			return false;
 		}
 
@@ -131,7 +131,7 @@ class CaseX
 	// • === firstCap »
 	public static function firstCap($string, $only = false)
 	{
-		if (!StringX::has($string)) {
+		if (HasX::nothing($string)) {
 			return false;
 		}
 
@@ -147,7 +147,7 @@ class CaseX
 	// • === lowerCount →
 	public static function lowerCount($string)
 	{
-		if (!StringX::has($string)) {
+		if (HasX::nothing($string)) {
 			return false;
 		}
 		return preg_match_all('/[a-z]/', $string);
@@ -158,7 +158,7 @@ class CaseX
 	// • === upperCount →
 	public static function upperCount($string)
 	{
-		if (!StringX::has($string)) {
+		if (HasX::nothing($string)) {
 			return false;
 		}
 		return preg_match_all('/[A-Z]/', $string);
@@ -169,7 +169,7 @@ class CaseX
 	// • === upperToSpace →
 	public static function upperToSpace($string)
 	{
-		if (!StringX::has($string)) {
+		if (HasX::nothing($string)) {
 			return false;
 		}
 		return preg_replace('/([a-z])([A-Z])/', '$1 $2', $string);
@@ -180,7 +180,7 @@ class CaseX
 	// • === lowerToSpace →
 	public static function lowerToSpace($string)
 	{
-		if (!StringX::has($string)) {
+		if (HasX::nothing($string)) {
 			return false;
 		}
 		return preg_replace('/([A-Z])([a-z])/', '$1 $2', $string);
@@ -191,7 +191,7 @@ class CaseX
 	// • === isLower »
 	public static function isLower($string)
 	{
-		if (!StringX::has($string)) {
+		if (HasX::nothing($string)) {
 			return false;
 		}
 		return ctype_lower($string);
@@ -202,7 +202,7 @@ class CaseX
 	// • === isUpper »
 	public static function isUpper($string)
 	{
-		if (!StringX::has($string)) {
+		if (HasX::nothing($string)) {
 			return false;
 		}
 		return ctype_upper($string);
@@ -213,7 +213,7 @@ class CaseX
 	// • === isMixed »
 	public static function isMixed($string)
 	{
-		if (!StringX::has($string)) {
+		if (HasX::nothing($string)) {
 			return false;
 		}
 		return (preg_match('/[a-z]/', $string) && preg_match('/[A-Z]/', $string));
@@ -224,7 +224,7 @@ class CaseX
 	// • === grab »
 	public static function grabUpperOrLower($string, $case)
 	{
-		if (!StringX::has($string) || empty($case)) {
+		if (HasX::nothing($string) || empty($case)) {
 			return false;
 		}
 
