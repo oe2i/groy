@@ -7,6 +7,7 @@ use Yale\Orig\Can;
 use Yale\Orig\Has;
 use Illuminate\Support\Str;
 use Groy\Xeno\Data\String\EndX;
+use Groy\Xeno\Data\String\HasX;
 use Groy\Xeno\Data\String\CaseX;
 use Groy\Xeno\Data\String\CropX;
 use Groy\Xeno\Data\String\SwapX;
@@ -55,9 +56,12 @@ class StringX
 
 
 	// • === has → is string & not empty » boolean
-	public static function has($string)
+	public static function has($string = null)
 	{
-		return self::length($string) > 0;
+		if ($string) {
+			return HasX::something($string);
+		}
+		return new HasX;
 	}
 
 
@@ -65,7 +69,7 @@ class StringX
 	// • === encoded → $var is string & encoded » boolean
 	public static function encoded($string)
 	{
-		if (!self::has($string)) {
+		if (hasx::nothing($string)) {
 			return false;
 		}
 
@@ -98,7 +102,7 @@ class StringX
 	// • === in » boolean
 	public static function in($string, $needle, $case = true)
 	{
-		if (!self::has($string) || !self::is($needle)) {
+		if (hasx::nothing($string) || !self::is($needle)) {
 			return false;
 		}
 
@@ -114,7 +118,7 @@ class StringX
 	// • === contain » boolean
 	public static function contain($string, $needle, $case = true)
 	{
-		if (!self::has($string)) {
+		if (hasx::nothing($string)) {
 			return false;
 		}
 
@@ -135,7 +139,7 @@ class StringX
 	// • === containAny » boolean
 	public static function containAny($string, array $needles, $case = true)
 	{
-		if (!self::has($string)) {
+		if (hasx::nothing($string)) {
 			return false;
 		}
 
@@ -164,7 +168,7 @@ class StringX
 	// • === compare » boolean
 	public static function compare($string, $needle, $strict = true)
 	{
-		if (!self::has($string) || !self::has($needle)) {
+		if (hasx::nothing($string) || hasx::nothing($needle)) {
 			return false;
 		}
 		return $strict ? $string === $needle : strtolower($string) == strtolower($needle);
@@ -175,7 +179,7 @@ class StringX
 	// • === nth → nth character » string
 	public static function nth($string, $nth)
 	{
-		if (!self::has($string)) {
+		if (hasx::nothing($string)) {
 			return false;
 		}
 
@@ -206,7 +210,7 @@ class StringX
 	// • === last » string
 	public static function last($string)
 	{
-		if (!self::has($string)) {
+		if (hasx::nothing($string)) {
 			return false;
 		}
 		return substr($string, -1);
@@ -217,7 +221,7 @@ class StringX
 	// • === occurrence → count » boolean, number
 	public static function occurrence($string, $needle, $offset = 0, $length = null)
 	{
-		if (!self::has($string) || !self::has($needle) || !is_numeric($offset)) {
+		if (hasx::nothing($string) || hasx::nothing($needle) || !is_numeric($offset)) {
 			return false;
 		}
 
@@ -246,7 +250,7 @@ class StringX
 	// • === occurrenceNth » get position of nth occurrence
 	public static function occurrenceNth($string, $character, $nth)
 	{
-		if (!self::has($string) || !self::has($character) || !is_numeric($nth)) {
+		if (hasx::nothing($string) || hasx::nothing($character) || !is_numeric($nth)) {
 			return false;
 		}
 
@@ -268,7 +272,7 @@ class StringX
 	// • === occurrenceGroupNth »
 	public static function occurrenceGroupNth($string, $separator, $nth, $return = 'nth')
 	{
-		if (!self::has($string) || !is_numeric($nth)) {
+		if (hasx::nothing($string) || !is_numeric($nth)) {
 			return false;
 		}
 
@@ -347,22 +351,17 @@ class StringX
 
 
 	// • === end »
-	public static function end(){
+	public static function end()
+	{
 		return new EndX;
 	}
 
 
 
 	// • === begin »
-	public static function begin(){
+	public static function begin()
+	{
 		return new BeginX;
-	}
-
-
-
-	// • === has »
-	public static function has(){
-		return new HasX;
 	}
 
 
@@ -370,7 +369,7 @@ class StringX
 	// • === noChar → remove special characters
 	public static function noChar($string, $append = null)
 	{
-		if (!self::has($string)) {
+		if (hasx::nothing($string)) {
 			return false;
 		}
 
@@ -391,7 +390,7 @@ class StringX
 	// • === separate » space string based on characters
 	public static function separate($string, string|array $separator = ['/', '-', '_', '.'])
 	{
-		if (!self::has($string) || empty($separator)) {
+		if (hasx::nothing($string) || empty($separator)) {
 			return false;
 		}
 
@@ -504,7 +503,7 @@ class StringX
 	// • === before → string before character
 	public static function before($string, $needle, $strip = true, $case = false)
 	{
-		if (!self::has($string) || !self::in($string, $needle, $case)) {
+		if (hasx::nothing($string) || !self::in($string, $needle, $case)) {
 			return false;
 		}
 
@@ -541,7 +540,7 @@ class StringX
 	// • === after → string after character
 	public static function after($string, $needle, $strip = true, $case = false, $occurrence = 'first')
 	{
-		if (!self::has($string) || !self::in($string, $needle, $case)) {
+		if (hasx::nothing($string) || !self::in($string, $needle, $case)) {
 			return false;
 		}
 
@@ -639,7 +638,7 @@ class StringX
 	// • === blur → blur censored character & vice-versa
 	public static function blur($string, $library, $blur = '***', $case = false)
 	{
-		if (!self::has($string) || empty($library)) {
+		if (hasx::nothing($string) || empty($library)) {
 			return false;
 		}
 
