@@ -9,7 +9,7 @@ class BeginX
 	// • === with → check string beginning » boolean
 	public static function with($string, $begin, $case = false)
 	{
-		if (!StringX::has($string) || !StringX::has($begin)) {
+		if (HasX::nothing($string) || HasX::nothing($begin)) {
 			return false;
 		}
 
@@ -32,7 +32,7 @@ class BeginX
 	// • === withAny → check if string begin with anything in array or comma separated string » string, boolean
 	public static function withAny($string, $begin, $case = false)
 	{
-		if (!StringX::has($string) || empty($begin)) {
+		if (HasX::nothing($string) || empty($begin)) {
 			return false;
 		}
 

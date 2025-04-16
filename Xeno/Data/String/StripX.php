@@ -37,7 +37,7 @@ class StripX
 		$nth = (int) $nth;
 		$number = isset($number) ? (int) $number : 1;
 
-		if (!StringX::has($string) || $nth <= 0 || $nth > $length || $number <= 0) {
+		if (HasX::nothing($string) || $nth <= 0 || $nth > $length || $number <= 0) {
 			return $string;
 		}
 

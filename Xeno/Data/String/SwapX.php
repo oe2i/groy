@@ -100,5 +100,4 @@ class SwapX
 
 
 
-
 } //> end of class ~ SwapX
