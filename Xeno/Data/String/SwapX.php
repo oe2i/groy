@@ -97,4 +97,8 @@ class SwapX
 	{
 		return self::space($string, $needle, true);
 	}
+
+
+
+
 } //> end of class ~ SwapX
