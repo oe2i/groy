@@ -15,6 +15,17 @@ class HasX
 
 
 
+	// • === character »
+	public static function character($var, $ignoreSpace = true)
+	{
+		if ($ignoreSpace) {
+			return preg_match('/[^a-zA-Z0-9\s]/', $var) === 1;
+		}
+		return preg_match('/[^a-zA-Z0-9]/', $var) === 1;
+	}
+
+
+
 	// • === letter »
 	public static function letter($var)
 	{
