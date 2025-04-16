@@ -669,100 +669,52 @@ class StringX
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	// • === isNumbers → is string numbers » boolean
-	public static function isNumber($string)
-	{
-		return Is::number($string);
-	}
-
-
-
-
-
-
-
-
-
 	// • === match → match pattern » boolean, string, array
 	public static function match($string, $pattern, $return = 'boolean', $flags = 0, $offset = 0)
 	{
-
-
-		if (!self::empty($pattern)) {
-			// → predefined pattern
-			$patterns = [
-				'uppercase' => "/^[A-Z]+$/",
-				'lowercase' => "/^[a-z]+$/",
-				'alpha' => "/^[A-Z]+$/i",
-				'numeric' => "/^[0-9]+$/",
-				'alphanumeric' => "/^[A-Z0-9]+$/i",
-			];
-
-			if (isset($patterns[$pattern])) {
-				$pattern = $patterns[$pattern];
-			}
+		if (HasX::nothing($string) || HasX::nothing($pattern)) {
+			return false;
 		}
 
-		if (!self::empty($string)) {
+		// → predefined pattern
+		$patterns = [
+			'uppercase' => "/^[A-Z]+$/",
+			'lowercase' => "/^[a-z]+$/",
+			'alpha' => "/^[A-Z]+$/i",
+			'numeric' => "/^[0-9]+$/",
+			'alphanumeric' => "/^[A-Z0-9]+$/i",
+		];
 
-			// → clean up pattern
-			if (!self::beginWith($pattern, '/')) {
-				$pattern = '/' . $pattern;
-			}
-			if (!self::endWith($pattern, '/')) {
-				$pattern = $pattern . '/';
-			}
+		if (isset($patterns[$pattern])) {
+			$pattern = $patterns[$pattern];
+		}
 
-			if ($return === 'matches' || $return === 'count') {
-				$preg = preg_match_all($pattern, $string, $match, $flags, $offset);
-			} else {
-				$preg = preg_match($pattern, $string, $match, $flags, $offset);
-			}
 
-			if ($preg !== false) {
-				if ($return === 'boolean' && $preg > 0) {
-					return true;
-				} elseif ($return === 'match' && $preg > 0 && is_array($match)) {
-					return $match[0];
-				} elseif ($return === 'matches' && $preg > 0 && is_array($match)) {
-					return $match;
-				} elseif ($return === 'count' && $preg > 0) {
-					return $preg;
-				}
+		// → clean up pattern
+		if (!BeginX::with($pattern, '/')) {
+			$pattern = '/' . $pattern;
+		}
+
+		if (!EndX::with($pattern, '/')) {
+			$pattern = $pattern . '/';
+		}
+
+		if ($return === 'matches' || $return === 'count') {
+			$preg = preg_match_all($pattern, $string, $match, $flags, $offset);
+		} else {
+			$preg = preg_match($pattern, $string, $match, $flags, $offset);
+		}
+
+		if ($preg !== false) {
+			if ($return === 'boolean' && $preg > 0) {
+				return true;
+			} elseif ($return === 'match' && $preg > 0 && is_array($match)) {
+				return $match[0];
+			} elseif ($return === 'matches' && $preg > 0 && is_array($match)) {
+				return $match;
+			} elseif ($return === 'count' && $preg > 0) {
+				return $preg;
 			}
 		}
-		return false;
 	}
 } //> end of class ~ StringX
