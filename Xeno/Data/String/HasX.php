@@ -40,11 +40,9 @@ class HasX
 		if (self::nothing($string)) {
 			return false;
 		}
-
 		if ($ignoreSpace) {
 			return preg_match('/[^a-zA-Z0-9\s]/', $string) === 1;
 		}
-
 		return preg_match('/[^a-zA-Z0-9]/', $string) === 1;
 	}
 
@@ -56,7 +54,6 @@ class HasX
 		if (self::nothing($string)) {
 			return false;
 		}
-
 		return preg_match('/[a-zA-Z]/', $string) === 1;
 	}
 
@@ -68,7 +65,6 @@ class HasX
 		if (self::nothing($string)) {
 			return false;
 		}
-
 		return (strpos(trim($string), ' ') !== false);
 	}
 
@@ -80,19 +76,39 @@ class HasX
 		if (self::nothing($string)) {
 			return false;
 		}
-
 		return (strpos($string, "\n") !== false || strpos($string, "\r\n") !== false || strpos($string, "\r") !== false);
 	}
 
 
 
-	// • === paragraph »;
+	// • === paragraph »
 	public static function paragraph($string)
 	{
 		if (self::nothing($string)) {
 			return false;
 		}
-
 		return (preg_match('/(\R){2,}/', $string));
+	}
+
+
+
+	// • === onlyLetter »
+	public static function onlyLetter($string)
+	{
+		if (self::nothing($string)) {
+			return false;
+		}
+		return ctype_alpha($string);
+	}
+
+
+
+	// • === onlyNumber »
+	public static function onlyNumber($string)
+	{
+		if (self::nothing($string)) {
+			return false;
+		}
+		return ctype_digit($string);
 	}
 } //> end of class ~ HasX
