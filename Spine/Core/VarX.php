@@ -24,6 +24,22 @@ class VarX
 
 
 
+	// ◈ === null »
+	public static function null(&$var)
+	{
+		return is_null($var);
+	}
+
+
+
+	// ◈ === instance »
+	public static function instance($var, $instanceOf)
+	{
+		return $var instanceof $instanceOf;
+	}
+
+
+
 	// • === type »
 	public static function type($var)
 	{
@@ -31,6 +47,20 @@ class VarX
 			return gettype($var);
 		}
 		return null;
+	}
+
+
+
+	// ◈ === isType » $var type or comparison
+	public static function isType(&$var, $type = null)
+	{
+		if (is_null($type)) {
+			return gettype($var);
+		}
+		if (!empty($type) && strtolower(gettype($var)) === strtolower($type)) {
+			return true;
+		}
+		return false;
 	}
 
 
@@ -71,6 +101,14 @@ class VarX
 			}
 		}
 		return false;
+	}
+
+
+
+	// • === numeric »
+	public static function numeric($var)
+	{
+		return is_numeric($var);
 	}
 
 
@@ -206,14 +244,14 @@ class VarX
 
 
 	// • === isCollection »
-	public static function isCollection($collection)
+	public static function collection($collection)
 	{
 		return $collection instanceof Collection;
 	}
 
 
-	public static function isModel($var)
+	public static function model($model)
 	{
-		return $var instanceof Model;
+		return $model instanceof Model;
 	}
 } //> end of class ~ VarX
