@@ -2,14 +2,18 @@
 
 namespace Groy\Xeno\Data;
 
-use Groy\Xeno\Data\String\SwapX;
-use Groy\Xeno\Data\String\SpaceX;
-use Groy\Xeno\Data\String\StripX;
-use Groy\Xeno\Data\String\CropX;
-use Illuminate\Support\Str;
 use Yale\Orig\Is;
 use Yale\Orig\Can;
 use Yale\Orig\Has;
+use Illuminate\Support\Str;
+use Groy\Xeno\Data\String\EndX;
+use Groy\Xeno\Data\String\CaseX;
+use Groy\Xeno\Data\String\CropX;
+use Groy\Xeno\Data\String\SwapX;
+use Groy\Xeno\Data\String\WordX;
+use Groy\Xeno\Data\String\BeginX;
+use Groy\Xeno\Data\String\SpaceX;
+use Groy\Xeno\Data\String\StripX;
 
 class StringX
 {
@@ -334,22 +338,150 @@ class StringX
 
 
 
+	// • === word »
+	public static function word()
+	{
+		return new WordX;
+	}
+
+
+
+	public static function end(){
+		return new EndX;
+	}
+
+
+
+	public static function begin(){
+		return new BeginX;
+	}
+
+
+
 	// • === noChar → remove special characters
 	public static function noChar($string, $append = null)
 	{
-		if (!self::empty($string)) {
-			$pattern = "A-Za-z0-9\-";
-			if (is_array($append) && !empty($append)) {
-				foreach ($append as $char) {
-					$pattern .= $char;
-				}
-			} elseif (!self::empty($append)) {
-				$pattern .= $append;
-			}
-			return preg_replace('/[^' . $pattern . ']/', '', $string);
+		if (!self::has($string)) {
+			return false;
 		}
+
+		$pattern = "A-Za-z0-9\-";
+		if (is_array($append) && !empty($append)) {
+			foreach ($append as $char) {
+				$pattern .= $char;
+			}
+		} elseif (!self::empty($append)) {
+			$pattern .= $append;
+		}
+
+		return preg_replace('/[^' . $pattern . ']/', '', $string);
+	}
+
+
+
+	// • === separate » space string based on characters
+	public static function separate($string, string|array $separator = ['/', '-', '_', '.'])
+	{
+		if (!self::has($string) || empty($separator)) {
+			return false;
+		}
+
+		if (self::is($separator)) {
+			return SwapX::withSpace($string, $separator);
+		}
+
+		foreach ($separator as $delimiter) {
+			$string = SwapX::withSpace($string, $delimiter);
+		}
+
+		return $string;
+	}
+
+
+
+	// • === singular »
+	public static function singular($string)
+	{
+		return Str::singular($string);
+	}
+
+
+
+	// • === plural »
+	public static function plural($string)
+	{
+		return Str::plural($string);
+	}
+
+
+
+	// • === toArray → string to array »
+	public static function toArray($string, $separator = null, $case = false)
+	{
+		if (!StringX::has($string)) {
+			return false;
+		}
+
+		if ($separator === null) {
+			return str_split($string);
+		}
+
+		if ($separator === 'space') {
+			return array_filter(array_map('trim', explode(' ', $string)), fn($v) => $v !== '');
+		}
+
+		if (!self::empty($string)) {
+			return array_filter(array_map('trim', explode($separator, $string)), fn($v) => $v !== '');
+		}
+
 		return false;
 	}
+
+
+
+	// • === toObject → string to object »
+	public static function toObject($string, $separator, $keySeparator)
+	{
+		if (!StringX::has($string) || !self::is($separator)) {
+			return false;
+		}
+
+		$pairs = explode($separator, trim($string));
+		$object = new \stdClass();
+
+		foreach ($pairs as $pair) {
+			$pair = trim($pair);
+			if (!empty($pair)) {
+				$parts = array_map('trim', explode($keySeparator, $pair, 2));
+
+				if (count($parts) === 2 && $parts[0] !== '') {
+					$object->{$parts[0]} = $parts[1];
+				}
+			}
+		}
+
+		return $object;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -450,7 +582,7 @@ class StringX
 
 
 	// • === afterAs → string after character or the string
-	public static function afterAs($string, $needle, $strip = true, $case = false, $occurrence = 'FIRST')
+	public static function afterAs($string, $needle, $strip = true, $case = false, $occurrence = 'first')
 	{
 		$stringAfter = self::after($string, $needle, $strip, $case, $occurrence);
 		if ($stringAfter === false) {
@@ -554,27 +686,10 @@ class StringX
 
 
 
-	// • === isUppercase → is string upper case » boolean
-	public static function isUppercase($string)
-	{
-		return Is::uppercase($string);
-	}
 
 
 
-	// • === isLowercase → is string lower case » boolean
-	public static function isLowercase($string)
-	{
-		return Is::lowercase($string);
-	}
 
-
-
-	// • === isMixedcase → is string lower & upper case » boolean
-	public static function isMixedcase($string)
-	{
-		return Is::mixedcase($string);
-	}
 
 
 
@@ -623,90 +738,6 @@ class StringX
 	}
 
 
-	// • === begin → check string beginning » boolean
-	public static function beginWith($string, $begin)
-	{
-		if (!self::empty($string) && !self::empty($begin)) {
-			$string = trim($string);
-			if (function_exists('str_starts_with')) {
-				return str_starts_with($string, $begin);
-			} else {
-				return strpos($string, $begin) === 0;
-			}
-		}
-		return false;
-	}
-
-
-
-	// • === beginWithAny → check if string begin with anything in array or comma separated string » string, boolean
-	public static function beginWithAny($string, $begins)
-	{
-
-		if (is_string($begins)) {
-			if (self::contain($begins, ',')) {
-				$begins = explode(',', $begins);
-			} elseif (self::beginWith($string, $begins)) {
-				return $begins;
-			}
-		}
-
-		foreach ($begins as $prefix) {
-			if (substr($string, 0, strlen($prefix)) === $prefix) {
-				return $prefix;
-			}
-		}
-
-		return false;
-	}
-
-
-	// • === endWith → check string ending » boolean
-	public static function endWith($string, $end)
-	{
-		if (!self::empty($string) && !self::empty($end)) {
-			$string = trim($string);
-			if (function_exists('str_ends_with')) {
-				return str_ends_with($string, $end);
-			} else {
-				$length = strlen($end);
-				return $length > 0 ? substr($string, -$length) === $end : true;
-			}
-		}
-		return false;
-	}
-
-
-
-	// • === endWithAny → check if string ends with anything in array or comma separated string » string, boolean
-	public static function endWithAny($string, $endings)
-	{
-
-		if (is_string($endings)) {
-			if (self::contain($endings, ',')) {
-				$endings = explode(',', $endings);
-			} elseif (self::endWith($string, $endings)) {
-				return $endings;
-			}
-		}
-
-		for ($i = count($endings) - 1; $i >= 0; $i--) {
-			$suffix = $endings[$i];
-			if (substr($string, -strlen($suffix)) === $suffix) {
-				return $suffix;
-			}
-		}
-
-		return false;
-	}
-
-
-
-	// • === endWithNewline » check if string ends with newline
-	public static function endWithNewline($string)
-	{
-		return preg_match('/(\r?\n)$/', $string);
-	}
 
 
 
@@ -762,409 +793,9 @@ class StringX
 	}
 
 
-
-	// • === toObject → string to object »
-	public static function toObject($string, $separator, $keySeparator)
-	{
-		$pairs = explode($separator, trim($string));
-		$object = new \stdClass();
-		if (is_array($pairs) && !empty($pairs)) {
-			foreach ($pairs as $pair) {
-				$pair = trim($pair);
-				if (!empty($pair)) {
-					list($key, $value) = array_map('trim', explode($keySeparator, $pair, 2));
-					$object->$key = $value;
-				}
-			}
-		}
-		return $object;
-	}
-
-
-
-	// • === toArray → string to array »
-	public static function toArray($string, $separator = null, $case = false)
-	{
-		if (!self::empty($string)) {
-			if (is_null($separator)) {
-				$array = str_split($string);
-			}
-
-			if ($separator === 'space') {
-				$array = array_map('trim', explode(' ', $string));
-			}
-
-			if (!self::empty($string)) {
-				$array = array_map('trim', explode($separator, $string));
-			}
-
-			if (isset($array)) {
-				return $array;
-			}
-		}
-		return false;
-	}
-
-
-
-	// • === toUppercase →
-	public static function toUppercase($string)
-	{
-		if (self::is($string)) {
-			return strtoupper($string);
-		}
-		return false;
-	}
-
-
-
-	// • === toLowercase →
-	public static function toLowercase($string)
-	{
-		if (self::is($string)) {
-			return strtolower(trim($string));
-		}
-		return false;
-	}
-
-
-
-	// • === toSentenceCase →
-	public static function toSentenceCase($string)
-	{
-		if (self::is($string)) {
-			return ucfirst(strtolower($string));
-		}
-		return false;
-	}
-
-
-
-	// • === toSnakeCase →
-	public static function toSnakeCase($string, $separator = null)
-	{
-		if (!empty($separator)) {
-			$words = explode($separator, $string);
-		} else {
-			$words = explode(' ', $string);
-		}
-		foreach ($words as $key => $word) {
-			if (self::isUppercase($word)) {
-				$words[$key] = strtolower($word);
-			}
-		}
-		$string = implode(' ', $words);
-		$string = preg_replace('/\s+/u', '', ucwords($string));
-		$string = preg_replace('/(.)(?=[A-Z])/u', '$1_', $string);
-		return strtolower($string);
-	}
-
-
-
-	// • === toCamelCase →
-	public static function toCamelCase($string, $separator = null)
-	{
-		if (!empty($separator)) {
-			$words = explode($separator, $string);
-			foreach ($words as $key => $word) {
-				if (self::isUppercase($word)) {
-					$words[$key] = strtolower($word);
-				}
-				$string = implode(' ', $words);
-			}
-		}
-		$string = preg_replace('/[^a-zA-Z0-9]+/', ' ', $string);
-		$string = strtolower($string);
-		$string = ucwords($string);
-		$string = str_replace(' ', '', $string);
-		$string = lcfirst($string);
-		return $string;
-	}
-
-
-
 	// • === toCapitalize →
 	public static function toCapitalize($string)
 	{
 		return ucwords(self::toSentenceCase($string));
-	}
-
-
-
-	// • === uppercaseCount →
-	public static function uppercaseCount($string)
-	{
-		$pattern = '/[A-Z]/';
-		return preg_match_all($pattern, $string);
-	}
-
-
-
-	// • === uppercaseToSpace →
-	public static function uppercaseToSpace($string)
-	{
-		return preg_replace('/([a-z])([A-Z])/', '$1 $2', $string);
-	}
-
-
-
-	// • === getUppercase → get upper case letter & positions » array, boolean [false]
-	public static function getUppercase($string)
-	{
-		preg_match_all('/[A-Z]/', $string, $matches, PREG_OFFSET_CAPTURE);
-		if (!empty($matches[0])) {
-			$matches = $matches[0];
-			$upperCase = [];
-			foreach ($matches as $match) {
-				$upperCase[$match[1]] = $match[0];
-			}
-			return $upperCase;
-		}
-		return false;
-	}
-
-
-
-	// • === getLowercase → get lower case letter & positions » array, boolean [false]
-	public static function getLowercase($string)
-	{
-		preg_match_all('/[a-z]/', $string, $matches, PREG_OFFSET_CAPTURE);
-		if (!empty($matches[0])) {
-			$matches = $matches[0];
-			$upperCase = [];
-			foreach ($matches as $match) {
-				$upperCase[$match[1]] = $match[0];
-			}
-			return $upperCase;
-		}
-		return false;
-	}
-
-
-
-	// • === grabAcronym »
-	public static function grabAcronym($string)
-	{
-		preg_match_all('/[A-Z]{2,}/', $string, $matches, PREG_OFFSET_CAPTURE);
-		$found = $matches[0];
-		if (!empty($found) && is_array($found)) {
-			$var = [];
-			foreach ($found as $key => $match) {
-				$var[$key]['acronym'] = $match[0];
-				$var[$key]['position'] = $match[1];
-				// echo "Found '$matchedText' at position $position\n";
-			}
-			return $var;
-		}
-	}
-
-
-
-	// • === hasAcronym »
-	public static function hasAcronym($string)
-	{
-		return preg_match('/[A-Z]{2,}/', $string);
-	}
-
-
-	// • === sentenceCase »
-	public static function sentenceCase($string, $acronym = true)
-	{
-		if (self::is($string)) {
-			if ($acronym) {
-				$found = self::grabAcronym($string);
-				if (is_array($found) && !empty($found)) {
-					foreach ($found as $key => $row) {
-						$swap = '_' . RandomX::numeric(10) . '_';
-						$found[$key]['swap'] = $swap;
-						$string = self::swapFirst($string, $row['acronym'], $swap);
-					}
-
-					$string = strtolower($string);
-
-					foreach ($found as $row) {
-						$string = self::swapFirst($string, $row['swap'], $row['acronym']);
-					}
-				} else {
-					$string = strtolower($string);
-				}
-			} else {
-				$string = strtolower($string);
-			}
-			return ucfirst($string);
-		}
-		return false;
-	}
-
-
-	// • === space »
-	public static function spacez($string, $separator = ['/', '-', '_', '.'])
-	{
-		if (!empty($separator)) {
-			if (is_array($separator)) {
-				foreach ($separator as $swap) {
-					$string = self::swap($string, $swap, ' ');
-				}
-			} else {
-				$string = self::swap($string, $separator, ' ');
-			}
-		}
-		return $string;
-	}
-
-
-	// • === countWords »
-	public static function count($string, $option = 'string')
-	{
-		if (self::is($string)) {
-			if ($option === 'string') {
-				return strlen($string);
-			} elseif ($option === 'words') {
-				return str_word_count($string);
-			}
-		}
-		return false;
-	}
-
-
-
-	// • === countWord »
-	public static function countWord($string)
-	{
-		return self::count($string, 'words');
-	}
-
-
-	// • === camelCase →
-	public static function camelCase($string, $separator = null, $strip = true)
-	{
-		if (!empty($separator)) {
-			$words = explode($separator, $string);
-			foreach ($words as $key => $word) {
-				if (self::isUppercase($word)) {
-					$words[$key] = strtolower($word);
-				}
-				$string = implode(' ', $words);
-			}
-		}
-		if (!$strip) {
-			$string = self::swap($string, ' ', ' ' . $separator);
-		}
-		// $string = preg_replace('/[^a-zA-Z0-9]+/', ' ', $string); #removes special characters
-		$string = strtolower($string);
-		if (!$strip) {
-			$string = ucwords($string, $separator);
-		} else {
-			$string = ucwords($string);
-		}
-		$string = str_replace(' ', '', $string);
-		$string = lcfirst($string);
-		return $string;
-	}
-
-
-
-	// • === firstCap »
-	public static function firstCap($string)
-	{
-		return ucfirst(strtolower($string));
-	}
-
-
-	// • === sentence »
-	public static function sentence($string, $acronym = true)
-	{
-		if (self::is($string)) {
-			if ($acronym) {
-				$found = self::grabAcronym($string);
-				if (is_array($found) && !empty($found)) {
-					foreach ($found as $key => $row) {
-						$swap = '_' . RandomX::numeric(10) . '_';
-						$found[$key]['swap'] = $swap;
-						$string = self::swapFirst($string, $row['acronym'], $swap);
-					}
-
-					$string = strtolower($string);
-
-					foreach ($found as $row) {
-						$string = self::swapFirst($string, $row['swap'], $row['acronym']);
-					}
-				} else {
-					$string = strtolower($string);
-				}
-			} else {
-				$string = strtolower($string);
-			}
-			return ucfirst($string);
-		}
-		return false;
-	}
-
-
-
-	// • === capitalize →
-	public static function capitalize($string)
-	{
-		return ucwords(self::sentence($string));
-	}
-
-
-	// • === lowercase →
-	public static function lowercase($string)
-	{
-		if (self::is($string)) {
-			return strtolower(trim($string));
-		}
-		return false;
-	}
-
-
-
-	// • === uppercase →
-	public static function uppercase($string)
-	{
-		if (self::is($string)) {
-			return strtoupper($string);
-		}
-		return false;
-	}
-
-
-	// • === singular »
-	public static function singular($string)
-	{
-		return Str::singular($string);
-	}
-
-
-
-	// • === plural »
-	public static function plural($string)
-	{
-		return Str::plural($string);
-	}
-
-
-
-	// • === words »
-	public static function words($string, $noOfWords)
-	{
-		return Str::words($string, $noOfWords);
-	}
-
-
-
-	// • === firstWord »
-	public static function firstWord($string)
-	{
-		return Str::words($string, 1);
-	}
-
-
-
-	// • === wordCount »
-	public static function wordCount($string)
-	{
-		return str_word_count($string, 0, '');
 	}
 } //> end of class ~ StringX
