@@ -346,14 +346,23 @@ class StringX
 
 
 
+	// • === end »
 	public static function end(){
 		return new EndX;
 	}
 
 
 
+	// • === begin »
 	public static function begin(){
 		return new BeginX;
+	}
+
+
+
+	// • === has »
+	public static function has(){
+		return new HasX;
 	}
 
 
@@ -699,43 +708,9 @@ class StringX
 		return Is::number($string);
 	}
 
-	// • === hasNumber → string contains numbers »
-	public static function hasNumber($string)
-	{
-		return Has::number($string);
-	}
 
 
 
-	// • === hasLetter → string contains letters »
-	public static function hasLetter($string)
-	{
-		return Has::letter($string);
-	}
-
-
-
-	// • === hasSpace → string has space »
-	public static function hasSpace($string)
-	{
-		return Has::space($string);
-	}
-
-
-
-	// • === hasNewline → string has newline »
-	public static function hasNewline($string)
-	{
-		return Has::newline($string);
-	}
-
-
-
-	// • === hasParagraph → string has multiple consecutive newline »
-	public static function hasParagraph($string)
-	{
-		return Has::paragraph($string);
-	}
 
 
 
