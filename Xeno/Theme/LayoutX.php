@@ -7,22 +7,23 @@ use Groy\Spine\Ally\BladeX;
 class LayoutX
 {
 	// • === prepare »
-	public static function prepare($file)
+	public static function prepare($file, $check = true)
 	{
-		return ThemeX::prepare('layout', $file);
+		$file = ThemeX::prepare('layout', $file);
+		if ($check) {
+			return BladeX::safe($file);
+		}
+		return $file;
 	}
 
 
 
 
 	// • === oreo »
-	public static function oreo($layout, $check = true)
+	public static function oreo($layout)
 	{
-		$layout = self::prepare($layout);
-		if ($check) {
-			return BladeX::safe($layout);
-		}
-		return $layout;
+		// TODO: ...
+		return self::prepare($layout, true);
 	}
 
 
@@ -32,6 +33,24 @@ class LayoutX
 	public static function bit($file)
 	{
 		return self::prepare('bit.' . $file);
+	}
+
+
+
+
+	// • === head »
+	public static function head($file)
+	{
+		return self::bit('head.' . $file);
+	}
+
+
+
+
+	// • === foot »
+	public static function foot($file)
+	{
+		return self::bit('foot.' . $file);
 	}
 
 
