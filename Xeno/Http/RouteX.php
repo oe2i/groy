@@ -85,7 +85,6 @@ class RouteX
 
 
 
-
 	// • === isCurrent »
 	public static function isCurrent($route, $type = 'route')
 	{
