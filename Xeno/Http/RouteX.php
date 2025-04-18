@@ -9,12 +9,35 @@ use Groy\Xeno\Auth\AuthX;
 
 class RouteX
 {
+	// • === hrefActive » get active route [name/uri/url] to use
+	public static function hrefActive($type = null, $absolute = false)
+	{
+		if ($type) {
+			return self::current($type);
+		}
+
+		$route = self::current('name');
+
+		if (!$route) {
+			if (!$absolute) {
+				$route = self::current('uri');
+			} else {
+				$route = self::current('url');
+			}
+		}
+
+		return $route;
+	}
+
+
+
+
 	// • === href »
 	public static function href($route = null, $param = [], $absolute = false)
 	{
 
 		if (!$route) {
-			$route = self::active(absolute: $absolute);
+			$route = self::hrefActive(absolute: $absolute);
 		}
 
 		if (Route::has($route)) {
@@ -57,29 +80,6 @@ class RouteX
 			}
 			return $current;
 		}
-	}
-
-
-
-
-	// • === active » get active route name to use
-	public static function active($type = null, $absolute = false)
-	{
-		if ($type) {
-			return self::current($type);
-		}
-
-		$route = self::current('name');
-
-		if (!$route) {
-			if (!$absolute) {
-				$route = self::current('uri');
-			} else {
-				$route = self::current('url');
-			}
-		}
-
-		return $route;
 	}
 
 
