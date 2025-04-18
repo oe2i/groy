@@ -59,7 +59,7 @@ class BeginX
 
 
 
-	// • === ifNot »
+	// • === ifNot » add begning if it is not already there
 	public static function ifNot($string, $begin, $case = false)
 	{
 		if (HasX::something($string) &&  HasX::something($begin) && !self::with($string, $begin, $case)) {
