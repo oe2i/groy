@@ -1,10 +1,10 @@
-<?php //*** ThemeX ~ class » Groy™ Library © 2025 ∞ OE2i™ • www.oe2i.com ∞ Apache License ***//
+<?php //*** ThemeX ~ class. » Groy™ Library © April, 2025 ∞ OE2i™ • www.oe2i.com ∞ Apache License ***//
 
 namespace Groy\Xeno\Theme;
 
 use Groy\Spine\Core\EnvX;
+use Groy\Spine\Ally\BladeX;
 use Groy\Concept\Trait\StaticX;
-use Groy\Xeno\Data\StringX;
 
 class ThemeX
 {
@@ -29,39 +29,19 @@ class ThemeX
 
 
 
-	// ◈ === format »
-	private static function format($path)
-	{
-		if (!empty($path)) {
-			// TODO: implement
-			// $path = StringX::swap($path, '/', '.');
-		}
-		return $path;
-	}
 
-
-
-	// ◈ === as »
-	public static function as($path, $file = null)
+	// • === prepare »
+	public static function prepare($path, $file = null)
 	{
 		self::init();
-		$location = self::$theme;
+		$blade = self::$theme;
 		if (in_array($path, ['page', 'layout'])) {
-			$location .= ".{$path}.";
+			$blade .= ".{$path}.";
 		} elseif ($path != 'theme') {
 			// NOTE: repetitive [makeshift] - feature is TODO
-			$location .= '.' . $path;
+			$blade .= '.' . $path;
 		}
-		$location .= $file;
-		return self::format($location);
-	}
-
-
-
-	// ◈ === is »
-	public static function is()
-	{
-		self::init();
-		return self::$theme;
+		$blade .= $file;
+		return BladeX::format($blade);
 	}
 } //> end of class ~ ThemeX
