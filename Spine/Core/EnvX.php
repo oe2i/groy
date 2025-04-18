@@ -1,4 +1,4 @@
-<?php //*** EnvX ~ class » Groy™ Library © 2025 ∞ OE2i™ • www.oe2i.com ∞ Apache License ***//
+<?php //*** EnvX ~ class » Groy™ Library © April, 2025 ∞ OE2i™ • www.oe2i.com ∞ Apache License ***//
 
 namespace Groy\Spine\Core;
 
@@ -166,6 +166,6 @@ class EnvX
 	{
 		self::init();
 		$theme = self::property('project', 'theme');
-		return !empty($theme) ? $theme : 'groy';
+		return !empty($theme) ? $theme : 'oreo';
 	}
 } //> end of class ~ EnvX
