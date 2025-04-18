@@ -15,8 +15,6 @@ class PageX
 
 
 
-
-
 	// • === oreo »
 	public static function oreo($page, $check = true) {
 
