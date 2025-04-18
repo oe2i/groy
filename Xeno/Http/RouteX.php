@@ -21,10 +21,9 @@ class RouteX
 			return route($route, $param, $absolute);
 		}
 
-		// TODO: improve link handling
-		// if (!str_starts_with($route, '/')) {
-		// 	$route = '/' . $route;
-		// }
+		if (!$absolute) {
+			return StringX::begin()->ifNot($route, '/');
+		}
 
 		return $route;
 	}
@@ -67,7 +66,7 @@ class RouteX
 	// • === redirect »
 	public static function redirect($to)
 	{
-		// TODO: redirect if route is not active
+		// TODO: redirect if route is not active or delayed
 		return RedirectX::link($to);
 	}
 
@@ -90,5 +89,20 @@ class RouteX
 		if (!AuthX::is()) {
 			return self::goto($route, $param, $absolute, $type);
 		}
+	}
+
+
+
+	// • === ifAuthElse »
+	public static function ifAuthElse($success, $failure, $action = 'goto')
+	{
+		$route = AuthX::is() ? $success : $failure;
+		$route = (isset($route) && $route !== '' && $route !== false) ? $route : $success;
+		$route = self::format($route);
+
+		if ($action === 'goto') {
+			return RouteX::redirect($route);
+		}
+		return $route;
 	}
 } //> end of class ~ RouteX
