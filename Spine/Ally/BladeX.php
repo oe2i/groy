@@ -1,4 +1,4 @@
-<?php //*** BladeX ~ class » Groy™ Library © 2025 ∞ OE2i™ • www.oe2i.com ∞ Apache License ***//
+<?php //*** BladeX ~ class » Groy™ Library © April, 2025 ∞ OE2i™ • www.oe2i.com ∞ Apache License ***//
 
 namespace Groy\Spine\Ally;
 
@@ -10,10 +10,7 @@ class BladeX
 	// • === is »
 	public static function is($blade)
 	{
-		if (View::exists($blade)) {
-			return true;
-		}
-		return false;
+		return View::exists($blade);
 	}
 
 
@@ -31,4 +28,15 @@ class BladeX
 	{
 		return self::error($message, $blade);
 	}
+
+
+
+	// • === safe »
+	public static function safe($blade, $message = 'resource unavailable', $label = 'BladeX'){
+		if(self::is($blade)){
+			return $blade;
+		}
+		return self::e404($blade, $message, $blade);
+	}
+
 } //> end of class ~ BladeX
