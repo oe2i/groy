@@ -1,4 +1,4 @@
-<?php //*** CanX ~ class » Groy™ Library © 2025 ∞ OE2i™ • www.oe2i.com ∞ Apache License ***//
+<?php //*** CanX ~ class » Groy™ Library © April, 2025 ∞ OE2i™ • www.oe2i.com ∞ Apache License ***//
 
 namespace Groy\Spine\Core;
 
