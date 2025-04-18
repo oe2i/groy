@@ -1,7 +1,8 @@
-<?php //*** PathX ~ class » Groy™ Library © 2025 ∞ OE2i™ • www.oe2i.com ∞ Apache License ***//
+<?php //*** PathX ~ class » Groy™ Library © April, 2025 ∞ OE2i™ • www.oe2i.com ∞ Apache License ***//
 
 namespace Groy\Spine\Core;
 
+use Groy\Xeno\Data\StringX;
 use Groy\Concept\Trait\StaticX;
 
 class PathX
@@ -14,6 +15,7 @@ class PathX
 	private static bool $init = false;
 	private static string $DS = DIRECTORY_SEPARATOR;
 	private static string $PS = '/';
+	private static string $oreo = 'oreo';
 
 
 
@@ -21,6 +23,7 @@ class PathX
 	private static function init()
 	{
 		if (!self::$init) {
+			self::$oreo = strtolower(EnvX::theme());
 			self::$init = true;
 		}
 	}
@@ -91,78 +94,32 @@ class PathX
 
 
 
-	// • === route »
-	public static function route(string $path = '')
-	{
-		self::init();
-		if (!empty($path)) {
-			$path = self::$DS . $path;
-		}
-		$path = 'routes' . $path;
-		return self::base($path);
-	}
-
-
-
-	// • === groy »
-	public static function groy(string $type, string $path = '')
-	{
-		self::init();
-		if ($type === 'route') {
-			$path = self::route('groy');
-		}
-		return $path;
-	}
-
-
-
-	// • === theme »
-	public static function theme(string $type, string $path = '')
-	{
-		self::init();
-		if ($type === 'route') {
-			$path = self::route(strtolower(EnvX::theme()));
-		}
-		return $path;
-	}
-
-
-
-	// • === debug »
-	public static function debug(string $type = 'route', string $path = '')
-	{
-		self::init();
-		if ($type === 'route') {
-			$path = self::route('debug');
-		}
-		return $path;
-	}
-
-
-
 	// • === router »
-	public static function router(string $path = 'groy::web')
+	public static function router(string $path = 'oreo::web')
 	{
 		self::init();
-		if ($path === 'groy::api') {
-			return self::route('groy' . self::$DS . 'api.php');
-		} elseif ($path === 'groy::app') {
-			return self::route('groy' . self::$DS . 'app.php');
-		} elseif ($path === 'groy::site') {
-			return self::route('groy' . self::$DS . 'site.php');
-		} elseif ($path === 'groy::web') {
-			$path = 'groy' . self::$DS;
-			return [
-				// 'api' => self::route($path . 'api.php'),
-				'app' => self::route($path . 'app.php'),
-				'site' => self::route($path . 'site.php')
-			];
-		} elseif ($path === 'debug::api') {
-			return self::route('debug' . self::$DS . 'api.php');
-		} elseif ($path === 'debug::app') {
-			return self::route('debug' . self::$DS . 'app.php');
+
+		if (StringX::begin()->with($path, 'oreo')) {
+			$path = self::oreo($path);
 		}
-		return self::route($path);
+
+		if (StringX::begin()->with($path, 'debug')) {
+			$path = self::debug($path);
+		}
+
+		if(is_string($path)){
+			$path = 'routes' . StringX::begin()->ifNot($path, self::$DS);
+			$path = self::base($path);
+		}
+
+		if(is_array($path)){
+			foreach($path as $key => $value){
+				$value = 'routes' . StringX::begin()->ifNot($value, self::$DS);
+				$path[$key] = self::base($value);
+			}
+		}
+
+		return $path;
 	}
 
 
@@ -197,5 +154,54 @@ class PathX
 				return $path;
 			}
 		};
+	}
+
+
+
+	// • === oreo »
+	private static function oreo(string $path)
+	{
+		self::init();
+		$oreo = self::$oreo . self::$DS;
+
+		if ($path === 'oreo::api') {
+			return $oreo . 'api.php';
+		}
+
+		if ($path === 'oreo::app') {
+			return $oreo . 'app.php';
+		}
+
+		if ($path === 'oreo::site') {
+			return $oreo . 'site.php';
+		}
+
+		if ($path === 'oreo::web') {
+			return [
+				'app' => $oreo . 'app.php',
+				'site' => $oreo . 'site.php'
+			];
+		}
+
+		return $oreo . StringX::crop()->begin($path, self::$DS);
+	}
+
+
+
+	// • === debug »
+	private static function debug(string $path)
+	{
+		self::init();
+		$debug = self::oreo('debug' . self::$DS);
+
+		if ($path === 'debug::api') {
+			$path = $debug . 'api.php';
+		} elseif ($path === 'debug::app') {
+			$path = $debug . 'app.php';
+		} else {
+			$path = $debug . StringX::crop()->begin($path, self::$DS);
+		}
+
+		return $path;
 	}
 } //> end of class ~ PathX
