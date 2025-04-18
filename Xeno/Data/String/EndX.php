@@ -7,7 +7,7 @@ use Groy\Xeno\Data\StringX;
 class EndX
 {
 	// • === with → check string ending » boolean
-	public static function with($string, $end, $case = true)
+	public static function with($string, $end, $case = false)
 	{
 		if (HasX::nothing($string) || HasX::nothing($end)) {
 			return false;
@@ -60,6 +60,17 @@ class EndX
 		}
 
 		return false;
+	}
+
+
+
+	// • === ifNot »
+	public static function ifNot($string, $begin, $case = false)
+	{
+		if (!self::with($string, $begin, $case)) {
+			return $string . $begin;
+		}
+		return $string;
 	}
 
 
