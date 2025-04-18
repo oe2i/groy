@@ -56,4 +56,15 @@ class BeginX
 
 		return false;
 	}
+
+
+
+	// • === ifNot »
+	public static function ifNot($string, $begin, $case = false)
+	{
+		if (HasX::something($string) &&  HasX::something($begin) && !self::with($string, $begin, $case)) {
+			return $begin . $string;
+		}
+		return $string;
+	}
 } //> end of class ~ BeginX
