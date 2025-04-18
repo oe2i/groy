@@ -29,7 +29,7 @@ class CropX
 	// • === begin → remove beginning of string »
 	public static function begin($string, $needle, $case = false)
 	{
-		if (StringX::beginWith($string, $needle)) {
+		if (BeginX::with($string, $needle)) {
 			return StripX::first($string, $needle, $case);
 		}
 		return $string;
@@ -48,7 +48,7 @@ class CropX
 	// • === end → remove end of string »
 	public static function end($string, $needle, $case = false)
 	{
-		if (StringX::beginWith($string, $needle)) {
+		if (EndX::with($string, $needle)) {
 			return StripX::last($string, $needle, $case);
 		}
 		return $string;
