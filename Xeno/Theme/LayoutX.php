@@ -1,114 +1,66 @@
-<?php //*** LayoutX ~ class » Groy™ Library © 2025 ∞ OE2i™ • www.oe2i.com ∞ Apache License ***//
+<?php //*** LayoutX ~ class. » Groy™ Library © April, 2025 ∞ OE2i™ • www.oe2i.com ∞ Apache License ***//
 
 namespace Groy\Xeno\Theme;
 
-use Groy\Xeno\Theme\PageX;
+use Groy\Spine\Ally\BladeX;
 
 class LayoutX
 {
-	// • === as »
-	public static function as($file)
+	// • === prepare »
+	public static function prepare($file)
 	{
-		return ThemeX::as('layout', $file);
+		return ThemeX::prepare('layout', $file);
 	}
+
+
+
+
+	// • === oreo »
+	public static function oreo($layout, $check = true)
+	{
+		$layout = self::prepare($layout);
+		if ($check) {
+			return BladeX::safe($layout);
+		}
+		return $layout;
+	}
+
 
 
 
 	// • === bit »
 	public static function bit($file)
 	{
-		return self::as('bit.' . $file);
+		return self::prepare('bit.' . $file);
 	}
+
 
 
 
 	// • === region »
 	public static function region($file)
 	{
-		return self::as('region.' . $file);
+		return self::prepare('region.' . $file);
 	}
+
+
 
 
 	// • === slice »
 	public static function slice($file)
 	{
-		return self::as('slice.' . $file);
+		return self::prepare('slice.' . $file);
 	}
+
+
 
 
 	// • === piece »
 	public static function piece($file)
 	{
-		return self::as('piece.' . $file);
+		return self::prepare('piece.' . $file);
 	}
 
-
-
-	// • === nav »
-	public static function nav($file = null)
-	{
-		if ($file) {
-			return self::piece('nav.' . $file);
-		}
-
-		return new class extends LayoutX {
-
-			// ➝ primary
-			public function primary($file = null)
-			{
-				$file = $file ? "primary.$file" : 'primary';
-				return self::nav($file);
-			}
-
-
-			// ➝ secondary
-			public function secondary($file = null)
-			{
-				$file = $file ? "secondary.$file" : 'secondary';
-				return self::nav($file);
-			}
-
-
-			// ➝ topbar
-			public function topbar($file = null)
-			{
-				$file = $file ? "topbar.$file" : 'topbar';
-				return self::nav($file);
-			}
-
-
-			// ➝ sidebar
-			public function sidebar($file = null)
-			{
-				$file = $file ? "sidebar.$file" : 'sidebar';
-				return self::nav($file);
-			}
-
-
-			// ➝ header
-			public function header($file = null)
-			{
-				$file = $file ? "header.$file" : 'header';
-				return self::nav($file);
-			}
-
-
-			// ➝ footer
-			public function footer($file = null)
-			{
-				$file = $file ? "footer.$file" : 'footer';
-				return self::nav($file);
-			}
-
-
-			// ➝ bottom
-			public function bottom($file = null)
-			{
-				$file = $file ? "bottom.$file" : 'bottom';
-				return self::nav($file);
-			}
-		};
-	}
 
 
 
@@ -120,14 +72,16 @@ class LayoutX
 
 
 
+
 	// • === collop »
 	public static function collop($file, $module = null)
 	{
 		if (!empty($module)) {
 			$file = $module . '.' . $file;
 		}
-		return self::as('collop.' . $file);
+		return self::prepare('collop.' . $file);
 	}
+
 
 
 
@@ -137,13 +91,6 @@ class LayoutX
 		return self::collop('form.' . $file);
 	}
 
-
-
-	// • === page »
-	public static function page($file)
-	{
-		return PageX::as($file);
-	}
 
 
 
@@ -162,4 +109,73 @@ class LayoutX
 		}
 		return $file;
 	}
-} //> end of class ~ LayoutX
+
+
+
+
+	// • === nav »
+	public static function nav($file = null)
+	{
+		if ($file) {
+			return self::piece('nav.' . $file);
+		}
+
+		return new class extends LayoutX {
+			// ➝ primary
+			public function primary($file = null)
+			{
+				$file = $file ? "primary.$file" : 'primary';
+
+				return self::nav($file);
+			}
+
+			// ➝ secondary
+			public function secondary($file = null)
+			{
+				$file = $file ? "secondary.$file" : 'secondary';
+
+				return self::nav($file);
+			}
+
+			// ➝ topbar
+			public function topbar($file = null)
+			{
+				$file = $file ? "topbar.$file" : 'topbar';
+
+				return self::nav($file);
+			}
+
+			// ➝ sidebar
+			public function sidebar($file = null)
+			{
+				$file = $file ? "sidebar.$file" : 'sidebar';
+
+				return self::nav($file);
+			}
+
+			// ➝ header
+			public function header($file = null)
+			{
+				$file = $file ? "header.$file" : 'header';
+
+				return self::nav($file);
+			}
+
+			// ➝ footer
+			public function footer($file = null)
+			{
+				$file = $file ? "footer.$file" : 'footer';
+
+				return self::nav($file);
+			}
+
+			// ➝ bottom
+			public function bottom($file = null)
+			{
+				$file = $file ? "bottom.$file" : 'bottom';
+
+				return self::nav($file);
+			}
+		};
+	}
+}  // > end of class ~ LayoutX
