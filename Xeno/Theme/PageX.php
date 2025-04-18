@@ -3,6 +3,7 @@
 namespace Groy\Xeno\Theme;
 
 use Groy\Spine\Core\DebugX;
+use Groy\Spine\Ally\BladeX;
 
 class PageX
 {
@@ -17,12 +18,18 @@ class PageX
 
 
 	// • === oreo »
-	public static function oreo($page) {
+	public static function oreo($page, $check = true) {
 
 		// ➝ auth
 		if (in_array($page, ['login', 'register'])) {
 			$page = 'auth.'.$page;
-			// return LayoutX::page($page);
 		}
+
+		$page = LayoutX::page($page);
+
+		if($check){
+			return BladeX::safe($page);
+		}
+		return $page;
 	}
 } //> end of class ~ PageX;
