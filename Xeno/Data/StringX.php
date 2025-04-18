@@ -416,9 +416,9 @@ class StringX
 
 
 	// • === plural »
-	public static function plural($string)
+	public static function plural($string, $quantity = 2)
 	{
-		return Str::plural($string);
+		return Str::plural($string, $quantity);
 	}
 
 
