@@ -1,4 +1,4 @@
-<?php //*** App ~ organizr » Groy™ Library © 2025 ∞ OE2i™ • www.oe2i.com ∞ Apache License ***//
+<?php //*** App ~ organizr » Groy™ Library © April, 2025 ∞ OE2i™ • www.oe2i.com ∞ Apache License ***//
 
 namespace Groy\Orig\Organizr;
 
@@ -12,12 +12,6 @@ class App extends Controller
 	// • === index »
 	public static function index()
 	{
-		$landing = 'dashboard';
-		$route = RouteX::format('login');
-		if (AuthX::is()) {
-			$route = RouteX::format($landing);
-		}
-		$route = (isset($route) && $route !== '' && $route !== false) ? $route : $landing;
-		return RouteX::redirect($route);
+		return RouteX::ifAuthElse('dashboard', 'login');
 	}
 } //> end of class ~ App
