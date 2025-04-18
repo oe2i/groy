@@ -1,20 +1,20 @@
-<?php //*** RouteX ~ class » Groy™ Library © 2025 ∞ OE2i™ • www.oe2i.com ∞ Apache License ***//
+<?php //*** RouteX ~ class » Groy™ Library © April, 2025 ∞ OE2i™ • www.oe2i.com ∞ Apache License ***//
 
 namespace Groy\Xeno\Http;
 
 use Illuminate\Support\Facades\Route;
 use Groy\Xeno\Http\RedirectX;
+use Groy\Xeno\Data\StringX;
 use Groy\Xeno\Auth\AuthX;
 
 class RouteX
 {
-	public static function format($route = null, $param = [], $absolute = false)
+	// • === href »
+	public static function href($route = null, $param = [], $absolute = false)
 	{
-		if (empty($route)) {
-			$route = Route::currentRouteName();
-			if (empty($route)) {
-				$route = request()->getRequestUri();
-			}
+
+		if (!$route) {
+			$route = self::active(absolute: $absolute);
 		}
 
 		if (Route::has($route)) {
@@ -25,16 +25,21 @@ class RouteX
 			return StringX::begin()->ifNot($route, '/');
 		}
 
+		// NOTE: $absolute is true & route not found above!
+		// TODO: prepare the url
+
 		return $route;
 	}
+
 
 
 
 	// • === expired »
 	public static function expired($route = 'login', $param = ['status' => 'session-expired'], $absolute = false)
 	{
-		return self::format($route, $param, $absolute);
+		return self::href($route, $param, $absolute);
 	}
+
 
 
 
@@ -46,20 +51,47 @@ class RouteX
 		} elseif ($type === 'url') {
 			return url()->current();
 		} else {
-			return Route::current();
+			$current = Route::current();
+			if ($type === 'uri' && !empty($current->uri)) {
+				return StringX::begin()->ifNot($current->uri, '/');
+			}
+			return $current;
 		}
 	}
+
+
+
+
+	// • === active » get active route name to use
+	public static function active($type = null, $absolute = false)
+	{
+		if ($type) {
+			return self::current($type);
+		}
+
+		$route = self::current('name');
+
+		if (!$route) {
+			if (!$absolute) {
+				$route = self::current('uri');
+			} else {
+				$route = self::current('url');
+			}
+		}
+
+		return $route;
+	}
+
+
 
 
 
 	// • === isCurrent »
 	public static function isCurrent($route, $type = 'route')
 	{
-		if ($route === self::current($type)) {
-			return true;
-		}
-		return false;
+		return $route === self::current($type);
 	}
+
 
 
 
@@ -72,14 +104,16 @@ class RouteX
 
 
 
+
 	// • === goto
 	public static function goto($route = null, $param = [], $absolute = false, $type = 'route')
 	{
-		$route = self::format($route, $param, $absolute);
+		$route = self::href($route, $param, $absolute);
 		if (!self::isCurrent($route, $type)) {
 			return self::redirect($route);
 		}
 	}
+
 
 
 
@@ -93,12 +127,13 @@ class RouteX
 
 
 
+
 	// • === ifAuthElse »
 	public static function ifAuthElse($success, $failure, $action = 'goto')
 	{
 		$route = AuthX::is() ? $success : $failure;
 		$route = (isset($route) && $route !== '' && $route !== false) ? $route : $success;
-		$route = self::format($route);
+		$route = self::href($route);
 
 		if ($action === 'goto') {
 			return RouteX::redirect($route);
