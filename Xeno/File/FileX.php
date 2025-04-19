@@ -1,11 +1,13 @@
-<?php //*** FileX ~ class » Groy™ Library © 2025 ∞ OE2i™ • www.oe2i.com ∞ Apache License ***//
+<?php //*** FileX ~ class » Groy™ Library © April, 2025 ∞ OE2i™ • www.oe2i.com ∞ Apache License ***//
 
 namespace Groy\Xeno\File;
 
-use Groy\Spine\Core\DebugX;
-use Groy\Xeno\Data\RandomX;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
+use Groy\Xeno\File\File\IsX;
+use Groy\Xeno\File\File\InX;
+use Groy\Xeno\Data\RandomX;
+use Groy\Spine\Core\DebugX;
 
 class FileX
 {
@@ -46,16 +48,18 @@ class FileX
 		if ($file) {
 			return self::exist($file);
 		}
-		return new IsFileX;
+		return new IsX;
 	}
+
 
 
 
 	// • === in »
 	public static function in()
 	{
-		return new InFileX();
+		return new InX();
 	}
+
 
 
 
