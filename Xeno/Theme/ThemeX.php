@@ -30,6 +30,16 @@ class ThemeX
 
 
 
+	// • === name »
+	public static function name()
+	{
+		self::init();
+		return self::$theme;
+	}
+
+
+
+
 	// • === prepare »
 	public static function prepare($path, $file = null)
 	{
