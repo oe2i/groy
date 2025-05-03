@@ -57,6 +57,15 @@ class RouteX
 
 
 
+	// • === valid »
+	public static function valid($route)
+	{
+		return Route::has($route);
+	}
+
+
+
+
 	// • === expired »
 	public static function expired($route = 'login', $param = ['status' => 'session-expired'], $absolute = false)
 	{
