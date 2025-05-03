@@ -190,7 +190,7 @@ class DebugX
 
 
 	// • === exit »
-	public static function exit($var, string $title = 'Groy™')
+	public static function exit($var, ?string $title = 'Groy™')
 	{
 		self::dump($var, $title);
 		exit;
