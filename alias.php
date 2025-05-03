@@ -47,7 +47,7 @@ class Alias
 		$pathWithoutClass = dirname($path);
 		$namespace = str_replace(DIRECTORY_SEPARATOR, '\\', $pathWithoutClass);
 		if (!empty($namespace)) {
-			return 'Gory' . '\\' . $namespace;
+			return 'Groy' . '\\' . $namespace;
 		}
 	}
 
@@ -93,7 +93,7 @@ class Alias
 		) {
 			$namespace = $this->namespace($path);
 			$className = $namespace . '\\' . $class;
-			$result[$class] = $className . '::class';
+			$result[$class] = $className;
 		}
 
 		return $result;
