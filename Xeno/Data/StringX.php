@@ -2,9 +2,6 @@
 
 namespace Groy\Xeno\Data;
 
-use Yale\Orig\Is;
-use Yale\Orig\Can;
-use Yale\Orig\Has;
 use Illuminate\Support\Str;
 use Groy\Xeno\Data\String\EndX;
 use Groy\Xeno\Data\String\HasX;
