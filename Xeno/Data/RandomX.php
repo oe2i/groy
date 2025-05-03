@@ -2,7 +2,7 @@
 
 namespace Groy\Xeno\Data;
 
-use Groy\Enum\Cases;
+use Groy\Xeno\Enum\Cases;
 use Groy\Xeno\Number\NumberX;
 
 class RandomX
