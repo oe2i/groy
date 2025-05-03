@@ -1,6 +1,6 @@
 <?php //*** DebugX ~ class » Groy™ Library © May, 2025 ∞ OE2i™ • www.oe2i.com ∞ Apache License ***//
 
-namespace Groy\Spine;
+namespace Groy\Xeno\Core;
 
 class DebugX
 {
