@@ -72,14 +72,31 @@ class Alias
 			if ($file->isFile() && $file->getExtension() === 'php') {
 				$path = str_replace($this->rd . DIRECTORY_SEPARATOR, '', $file->getRealPath());
 				$className = $this->className($path);
-
-				if ($className && str_ends_with($className, 'X') && !str_contains(strtolower($path), 'trait')) {
-					$namespace = $this->namespace($path);
-					$fullClassName = $namespace . '\\' . $className;
-					$result[$className] = $fullClassName . '::class';
-				}
+				$this->exclude($className, $path, $result);
 			}
 		}
 		return $result;
 	}
+
+
+
+
+	// • === exclude »
+	private function exclude($class, $path, &$result)
+	{
+		if (
+			$class
+			&& str_ends_with($class, 'X')
+			&& !str_contains(strtolower($path), 'trait')
+			&& !str_contains(strtolower($path), 'array\\')
+			&& !str_contains(strtolower($path), 'string\\')
+		) {
+			$namespace = $this->namespace($path);
+			$className = $namespace . '\\' . $class;
+			$result[$class] = $className . '::class';
+		}
+
+		return $result;
+	}
+
 } //> end of class ~ Alias
