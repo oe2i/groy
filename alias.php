@@ -46,7 +46,9 @@ class Alias
 	{
 		$pathWithoutClass = dirname($path);
 		$namespace = str_replace(DIRECTORY_SEPARATOR, '\\', $pathWithoutClass);
-		return $namespace;
+		if (!empty($namespace)) {
+			return 'Gory' . '\\' . $namespace;
+		}
 	}
 
 
@@ -71,14 +73,13 @@ class Alias
 				$path = str_replace($this->rd . DIRECTORY_SEPARATOR, '', $file->getRealPath());
 				$className = $this->className($path);
 
-				if ($className && str_ends_with($className, 'X')) {
+				if ($className && str_ends_with($className, 'X') && !str_contains(strtolower($path), 'trait')) {
 					$namespace = $this->namespace($path);
 					$fullClassName = $namespace . '\\' . $className;
 					$result[$className] = $fullClassName . '::class';
 				}
 			}
 		}
-
 		return $result;
 	}
 } //> end of class ~ Alias
