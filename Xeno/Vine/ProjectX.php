@@ -2,7 +2,7 @@
 
 namespace Groy\Xeno\Vine;
 
-use Groy\Xeno\Theme\PageX;
+use Groy\Xeno\Skin\PageX;
 use Groy\Xeno\Data\StringX;
 use Groy\Xeno\Core\EnvX;
 
