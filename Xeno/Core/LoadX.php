@@ -67,10 +67,27 @@ class LoadX
 
 
 
-	// • === oreo »
-	public static function oreo($path)
+	// • === api »
+	public static function api($path = 'api')
 	{
-		return self::route('oreo::' . $path);
+		return self::route('theme::' . $path);
+	}
+
+
+
+
+	// • === app »
+	public static function app($path = 'app')
+	{
+		return self::route('theme::' . $path);
+	}
+
+
+
+	// • === web »
+	public static function web($path = 'web')
+	{
+		return self::route('theme::' . $path);
 	}
 
 
