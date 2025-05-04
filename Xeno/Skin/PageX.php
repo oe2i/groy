@@ -56,8 +56,8 @@ class PageX
 
 
 
-	// • === norm »
-	public static function norm($page, $check = true)
+	// • === guide »
+	public static function guide($page, $check = true)
 	{
 		// ➝ auth
 		if (in_array($page, ['login', 'register'])) {
@@ -81,4 +81,15 @@ class PageX
 		$title = StringX::afterLastAs($title, '.');
 		return $title;
 	}
+
+
+
+
+	// • === render »
+	public static function render($view, array $data = [], array $merge = [])
+	{
+		$view = self::guide($view);
+		return view($view, $data, $merge);
+	}
+
 } //> end of class ~ PageX;
