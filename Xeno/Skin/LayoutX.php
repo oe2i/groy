@@ -39,18 +39,39 @@ class LayoutX
 
 
 	// • === view »
-	public static function view($file, $check = true)
-	{
-		return self::prepare($file, $check);
-	}
+	// public static function view($file, $check = true)
+	// {
+	// 	return self::prepare($file, $check);
+	// }
 
 
 
 
 	// • === site »
-	public static function site($check = true, $file = 'site')
+	public static function site($check = true, $file = 'site', $render = false, array $data = [], array $merge = [])
 	{
-		return self::prepare($file, $check);
+		$view = self::prepare($file, $check);
+
+		if ($render) {
+			return view($view, $data, $merge);
+		}
+
+		return $view;
+	}
+
+
+
+
+	// • === auth »
+	public static function auth($check = true, $file = 'auth', $render = false, array $data = [], array $merge = [])
+	{
+		$view = self::prepare($file, $check);
+
+		if ($render) {
+			return view($view, $data, $merge);
+		}
+
+		return $view;
 	}
 
 
@@ -107,13 +128,11 @@ class LayoutX
 
 
 
-
 	// • === header »
 	public static function header($check = true, $file = 'header')
 	{
 		return self::slice($file, $check);
 	}
-
 
 
 
