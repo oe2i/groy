@@ -18,7 +18,7 @@ class PathX
 	private static bool $init = false;
 	private static string $ds = DIRECTORY_SEPARATOR;
 	private static string $ps = '/';
-	private static string $oreo = 'oreo';
+	private static string $theme = 'oreo';
 
 
 
@@ -27,7 +27,7 @@ class PathX
 	private static function init()
 	{
 		if (!self::$init) {
-			self::$oreo = strtolower(EnvX::theme());
+			self::$theme = strtolower(EnvX::theme());
 			self::$init = true;
 		}
 	}
@@ -108,12 +108,12 @@ class PathX
 
 
 	// • === router »
-	public static function router(string $path = 'oreo::web')
+	public static function router(string $path = 'theme::web')
 	{
 		self::init();
 
-		if (BeginX::with($path, 'oreo')) {
-			$path = self::oreo($path);
+		if (BeginX::with($path, 'theme')) {
+			$path = self::theme($path);
 		}
 
 		if (BeginX::with($path, 'debug')) {
@@ -174,32 +174,32 @@ class PathX
 
 
 
-	// • === oreo »
-	private static function oreo(string $path)
+	// • === theme »
+	private static function theme(string $path)
 	{
 		self::init();
-		$oreo = self::$oreo . self::$ds;
+		$theme = self::$theme . self::$ds;
 
-		if ($path === 'oreo::api') {
-			return $oreo . 'api.php';
+		if ($path === 'theme::api') {
+			return $theme . 'api.php';
 		}
 
-		if ($path === 'oreo::app') {
-			return $oreo . 'app.php';
+		if ($path === 'theme::app') {
+			return $theme . 'app.php';
 		}
 
-		if ($path === 'oreo::site') {
-			return $oreo . 'site.php';
+		if ($path === 'theme::site') {
+			return $theme . 'site.php';
 		}
 
-		if ($path === 'oreo::web') {
+		if ($path === 'theme::web') {
 			return [
-				'app' => $oreo . 'app.php',
-				'site' => $oreo . 'site.php'
+				'app' => $theme . 'app.php',
+				'site' => $theme . 'site.php'
 			];
 		}
 
-		return $oreo . CropX::begin($path, self::$ds);
+		return $theme . CropX::begin($path, self::$ds);
 	}
 
 
@@ -209,7 +209,7 @@ class PathX
 	private static function debug(string $path)
 	{
 		self::init();
-		$debug = self::oreo('debug' . self::$ds);
+		$debug = self::theme('debug' . self::$ds);
 
 		if ($path === 'debug::api') {
 			$path = $debug . 'api.php';
