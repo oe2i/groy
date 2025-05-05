@@ -3,6 +3,7 @@
 namespace Groy\Xeno\Data\String;
 
 use Groy\Xeno\Data\StringX;
+use Groy\Xeno\Data\Array\ValueX;
 
 class BeginX
 {
@@ -65,6 +66,21 @@ class BeginX
 	public static function ifNot($string, $begin, $case = false)
 	{
 		if (HasX::something($string) && HasX::something($begin) && !self::with($string, $begin, $case)) {
+			return $begin . $string;
+		}
+		return $string;
+	}
+
+
+
+
+	// • === ifNotAny »
+	public static function ifNotAny($string, $begin, $case = false)
+	{
+		if (!self::withAny($string, $begin, $case)) {
+			if (is_array($begin)) {
+				$begin = ValueX::first($begin);
+			}
 			return $begin . $string;
 		}
 		return $string;
