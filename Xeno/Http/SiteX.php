@@ -17,6 +17,7 @@ class SiteX
 			$route = '/';
 			$view = 'index';
 		}
+
 		if ($route === 'welcome') {
 			if (!RouteX::valid('index')) {
 				$route = '/';
@@ -37,7 +38,9 @@ class SiteX
 		}
 
 		if (!$name) {
-			if (StringX::has()->onlyLetter($view)) {
+			if ($view === 'index') {
+				$name = 'index';
+			} elseif (StringX::has()->onlyLetter($view)) {
 				$name = 'site.' . $view;
 			}
 		}
