@@ -254,17 +254,7 @@ class KeyX
 	// • === toUpper »
 	public static function toUpper($array)
 	{
-		if (!ArrayX::has($array)) {
-			return false;
-		}
-
-		$reArray = [];
-		foreach ($array as $key => $value) {
-			$index = strtoupper($key);
-			$reArray[$index] = $value;
-		}
-
-		return $reArray;
+		return array_change_key_case($array, CASE_UPPER);
 	}
 
 
@@ -272,17 +262,7 @@ class KeyX
 	// • === toLower »
 	public static function toLower($array)
 	{
-		if (!ArrayX::has($array)) {
-			return false;
-		}
-
-		$reArray = [];
-		foreach ($array as $key => $value) {
-			$index = strtolower($key);
-			$reArray[$index] = $value;
-		}
-
-		return $reArray;
+		return array_change_key_case($array, CASE_LOWER);
 	}
 
 
@@ -302,7 +282,7 @@ class KeyX
 	public static function filter(array $array, $filter, null|string|bool $remove = null): array
 	{
 		$reArray = [];
-		$keys = ArrayX::as($filter);
+		$keys = ArrayX:: as($filter);
 
 		foreach ($keys as $key) {
 			$reArray[$key] = array_key_exists($key, $array) ? $array[$key] : '';
@@ -401,6 +381,6 @@ class KeyX
 	// • === byValues → find key by the values in array »
 	public static function byValues($array, $values, $strict = false)
 	{
-		return array_keys($array, $values,  $strict);
+		return array_keys($array, $values, $strict);
 	}
 } //> end of class ~ KeyX
