@@ -3,6 +3,7 @@
 namespace Groy\Xeno\Data\String;
 
 use Groy\Xeno\Data\StringX;
+use Groy\Xeno\Data\Array\ValueX;
 
 class EndX
 {
@@ -35,7 +36,7 @@ class EndX
 
 
 	// • === withAny → check if string end with anything in array or comma separated string » string, boolean
-	public static function withAny($string, $end, $case = false)
+	public static function withAny($string, $end, $case = false, $return = false)
 	{
 		if (HasX::nothing($string) || empty($end)) {
 			return false;
@@ -45,7 +46,11 @@ class EndX
 			if (StringX::in($end, ',')) {
 				$end = array_map('trim', explode(',', $end));
 			} else {
-				return self::with($string, $end, $case);
+				$check = self::with($string, $end, $case);
+				if ($return && $check) {
+					return $end;
+				}
+				return $check;
 			}
 		}
 
@@ -55,6 +60,9 @@ class EndX
 
 		foreach ($end as $suffix) {
 			if (self::with($string, $suffix, $case) === true) {
+				if ($return) {
+					return $suffix;
+				}
 				return true;
 			}
 		}
@@ -64,14 +72,31 @@ class EndX
 
 
 
+
 	// • === ifNot »
-	public static function ifNot($string, $begin, $case = false)
+	public static function ifNot($string, $end, $case = false)
 	{
-		if (!self::with($string, $begin, $case)) {
-			return $string . $begin;
+		if (!self::with($string, $end, $case)) {
+			return $string . $end;
 		}
 		return $string;
 	}
+
+
+
+
+	// • === ifNotAny »
+	public static function ifNotAny($string, $end, $case = false)
+	{
+		if (!self::withAny($string, $end, $case)) {
+			if (is_array($end)) {
+				$end = ValueX::first($end);
+			}
+			return $string . $end;
+		}
+		return $string;
+	}
+
 
 
 
