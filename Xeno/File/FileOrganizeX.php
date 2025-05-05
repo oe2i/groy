@@ -6,6 +6,7 @@ use Groy\Xeno\Core\EnvX;
 use Groy\Xeno\Data\Array\ValueX as ArrValueX;
 use Groy\Xeno\Data\String\BeginX as StrBeginX;
 use Groy\Xeno\Data\String\EndX as StrEndX;
+use Groy\Xeno\Data\StringX;
 use Groy\Xeno\Enum\Image as ImageEnumX;
 
 class FileOrganizeX
@@ -14,8 +15,11 @@ class FileOrganizeX
 	public static function theme($file)
 	{
 		$path = EnvX::theme();
-		$paths = [$path . DIRECTORY_SEPARATOR, $path . '/'];
-		return StrBeginX::ifNotAny($file, $paths);
+		$path = [$path . DIRECTORY_SEPARATOR, $path . '/'];
+		if (!StringX::containAny($file, $path)) {
+			$file = StrBeginX::ifNotAny($file, $path);
+		}
+		return $file;
 	}
 
 
@@ -31,9 +35,12 @@ class FileOrganizeX
 		$logo = StrEndX::ifNotAny($logo, $extension);
 
 		$path = ['logo' . DIRECTORY_SEPARATOR, 'logo/'];
-		$logo = StrBeginX::ifNotAny($logo, $path);
 
-		return $logo;
+		if (!StringX::containAny($logo, $path)) {
+			$logo = StrBeginX::ifNotAny($logo, $path);
+		}
+
+		return self::theme($logo);
 	}
 
 } //> end of class ~ FileOrganizeX
