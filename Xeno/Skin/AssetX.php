@@ -2,6 +2,7 @@
 
 namespace Groy\Xeno\Skin;
 
+use Groy\Xeno\Vine\ProjectX;
 use Groy\Xeno\File\FileX;
 use Groy\Xeno\Data\StringX;
 use Groy\Xeno\Core\EnvX;
@@ -20,13 +21,13 @@ class AssetX
 	// • === init »
 	private static function init()
 	{
-		if (!self::$init) {
+		if (! self::$init) {
 			$path = strtolower(EnvX::asset());
 			if ($path === 'theme') {
-				self::$path = ThemeX::name() . '/';
+				self::$path = ThemeX::name().'/';
 			} elseif ($path === 'asset') {
 				self::$path = 'asset/';
-			} elseif (!empty($path)) {
+			} elseif (! empty($path)) {
 				self::$path = StringX::end()->ifNot($path, '/');
 			}
 			self::$init = true;
@@ -60,17 +61,17 @@ class AssetX
 	public static function file($file, $check = true, $baseurl = false)
 	{
 		self::init();
-		if (!empty(self::$path)) {
-			$file = self::$path . $file;
+		if (! empty(self::$path)) {
+			$file = self::$path.$file;
 		}
 
-		if ($check && !self::is($file)) {
+		if ($check && ! self::is($file)) {
 			return self::e404($file);
 		}
 
 		$asset = asset($file);
 
-		if (!$baseurl) {
+		if (! $baseurl) {
 			return StringX::crop()->begin($asset, url('/'));
 		}
 		return $asset;
@@ -82,16 +83,17 @@ class AssetX
 	// • === favicon »
 	public static function favicon($favicon, $check = true, $baseurl = false)
 	{
-		return self::file('favicon/' . $favicon, $check, $baseurl);
+		return self::file('favicon/'.$favicon, $check, $baseurl);
 	}
 
 
 
 
 	// • === logo »
-	public static function logo($logo, $check = true, $baseurl = false)
+	public static function logo($logo = null, $check = true, $baseurl = false)
 	{
-		return self::file('logo/' . $logo, $check, $baseurl);
+		$logo = ! empty($logo) ? $logo : strtolower(ProjectX::alias()).'.png';
+		return self::file('logo/'.$logo, $check, $baseurl);
 	}
 
 
@@ -100,7 +102,7 @@ class AssetX
 	// • === image »
 	public static function image($image, $check = true, $baseurl = false)
 	{
-		return self::file('image/' . $image, $check, $baseurl);
+		return self::file('image/'.$image, $check, $baseurl);
 	}
 
 
@@ -109,7 +111,7 @@ class AssetX
 	// • === illustration »
 	public static function illustration($illustration, $check = true, $baseurl = false)
 	{
-		return self::file('illustration/' . $illustration, $check, $baseurl);
+		return self::file('illustration/'.$illustration, $check, $baseurl);
 	}
 
 
@@ -118,7 +120,7 @@ class AssetX
 	// • === media »
 	public static function media($media, $check = true, $baseurl = false)
 	{
-		return self::file('media/' . $media, $check, $baseurl);
+		return self::file('media/'.$media, $check, $baseurl);
 	}
 
 
@@ -128,7 +130,7 @@ class AssetX
 	public static function svg($svg, $check = true, $baseurl = false)
 	{
 		$svg = StringX::end()->ifNot($svg, '.svg');
-		return self::media('svg/' . $svg, $check, $baseurl);
+		return self::media('svg/'.$svg, $check, $baseurl);
 	}
 
 
@@ -138,7 +140,7 @@ class AssetX
 	public static function png($png, $check = true, $baseurl = false)
 	{
 		$png = StringX::end()->ifNot($png, '.png');
-		return self::media('png/' . $png, $check, $baseurl);
+		return self::media('png/'.$png, $check, $baseurl);
 	}
 
 
@@ -148,7 +150,7 @@ class AssetX
 	public static function gif($gif, $check = true, $baseurl = false)
 	{
 		$gif = StringX::end()->ifNot($gif, '.gif');
-		return self::media('gif/' . $gif, $check, $baseurl);
+		return self::media('gif/'.$gif, $check, $baseurl);
 	}
 
 
@@ -158,7 +160,7 @@ class AssetX
 	public static function js($js, $check = true, $baseurl = false)
 	{
 		$js = StringX::end()->ifNot($js, '.js');
-		return self::file('js/' . $js, $check, $baseurl);
+		return self::file('js/'.$js, $check, $baseurl);
 	}
 
 
@@ -168,7 +170,7 @@ class AssetX
 	public static function css($css, $check = true, $baseurl = false)
 	{
 		$css = StringX::end()->ifNot($css, '.css');
-		return self::file('css/' . $css, $check, $baseurl);
+		return self::file('css/'.$css, $check, $baseurl);
 	}
 
 
@@ -177,7 +179,7 @@ class AssetX
 	// • === vendor »
 	public static function vendor($file, $check = false, $baseurl = false)
 	{
-		return self::file('vendor/' . $file, $check, $baseurl);
+		return self::file('vendor/'.$file, $check, $baseurl);
 	}
 
 
@@ -186,7 +188,7 @@ class AssetX
 	// • === fa » fontawesome
 	public static function fa($file, $check = false, $baseurl = false)
 	{
-		return self::vendor('fontawesome/' . $file, $check, $baseurl);
+		return self::vendor('fontawesome/'.$file, $check, $baseurl);
 	}
 
 
@@ -198,7 +200,7 @@ class AssetX
 		if ($tag) {
 			$tag = StringX::end()->ifNot($tag, '/');
 		}
-		return self::file($tag . $file, $check, $baseurl);
+		return self::file($tag.$file, $check, $baseurl);
 	}
 
 
