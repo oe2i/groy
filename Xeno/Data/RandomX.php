@@ -201,12 +201,17 @@ class RandomX
 
 
 	// • === filename »
-	public static function filename($length = 10, string|Cases $case = Cases::BOTH, ?string $prefix = null, ?string $surfix = null)
+	public static function filename($extension = null, $length = 10, string|Cases $case = Cases::BOTH, ?string $prefix = null, ?string $surfix = null)
 	{
 		if ($case === 'numeric') {
-			return $prefix . self::numeric($length) . $surfix;
+			$filename = $prefix . self::numeric($length) . $surfix;
+		} else {
+			$filename = $prefix . self::alphanumeric($length, $case) . $surfix;
 		}
-		return $prefix . self::alphanumeric($length, $case) . $surfix;
+
+		$filename .= !empty($extension) ? '.' . $extension : '';
+
+		return $filename;
 	}
 
 
