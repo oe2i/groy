@@ -72,6 +72,45 @@ class ValueX
 
 
 
+
+	// • === toUpper »
+	public static function toUpper($array)
+	{
+		return array_map('strtoupper', $array);
+	}
+
+
+
+
+	// • === toLower »
+	public static function toLower($array)
+	{
+		return array_map('strtolower', $array);
+	}
+
+
+
+
+	// • === toCapitalize »
+	public static function toCapitalize($array)
+	{
+		$array = array_map('strtolower', $array);
+		return array_map('ucfirst', $array);
+	}
+
+
+
+
+	// • === toTitle »
+	public static function toTitle($array)
+	{
+		$array = array_map('strtolower', $array);
+		return array_map('ucwords', $array);
+	}
+
+
+
+
 	// • === strip → remove from array [by value] »
 	public static function strip($array, $filter)
 	{
@@ -104,6 +143,25 @@ class ValueX
 		array_push($array, $value);
 		return $array;
 	}
+
+
+
+
+	// • === prefix »
+	public static function prefix($array, $prefix)
+	{
+		return array_map(fn($value) => $prefix . $value, $array);
+	}
+
+
+
+
+	// • === suffix »
+	public static function suffix($array, $suffix)
+	{
+		return array_map(fn($value) => $suffix . $value, $array);
+	}
+
 
 
 
