@@ -1,4 +1,6 @@
-<?php //*** Alias ~ class » Groy™ Library © May, 2025 ∞ OE2i™ • www.oe2i.com ∞ Apache License ***//
+<?php
+
+use App\Yaic\Vine\Auth\Organizer;//*** Alias ~ class » Groy™ Library © May, 2025 ∞ OE2i™ • www.oe2i.com ∞ Apache License ***//
 
 // namespace Groy;
 // use RecursiveIteratorIterator;
@@ -46,6 +48,7 @@ class Alias
 	{
 		$pathWithoutClass = dirname($path);
 		$namespace = str_replace(DIRECTORY_SEPARATOR, '\\', $pathWithoutClass);
+
 		if (!empty($namespace)) {
 			return 'Groy' . '\\' . $namespace;
 		}
@@ -72,9 +75,10 @@ class Alias
 			if ($file->isFile() && $file->getExtension() === 'php') {
 				$path = str_replace($this->rd . DIRECTORY_SEPARATOR, '', $file->getRealPath());
 				$className = $this->className($path);
-				$this->exclude($className, $path, $result);
+				$this->organize($className, $path, $result);
 			}
 		}
+
 		return $result;
 	}
 
@@ -82,17 +86,27 @@ class Alias
 
 
 	// • === exclude »
-	private function exclude($class, $path, &$result)
+	private function organize($class, $path, &$result)
 	{
 		if (
 			$class
 			&& str_ends_with($class, 'X')
-			&& !str_contains(strtolower($path), 'trait')
-			&& !str_contains(strtolower($path), 'array\\')
-			&& !str_contains(strtolower($path), 'string\\')
+			&& !str_contains(strtolower($path), 'trait\\')
 		) {
 			$namespace = $this->namespace($path);
 			$className = $namespace . '\\' . $class;
+
+
+			// ... for string child-classes
+			if (str_contains(strtolower($className), 'string\\')) {
+				$class = 'Str' . $class;
+			}
+
+			// ... for array child-classes
+			if (str_contains(strtolower($className), 'array\\')) {
+				$class = 'Arr' . $class;
+			}
+
 			$result[$class] = $className;
 		}
 
