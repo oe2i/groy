@@ -2,6 +2,7 @@
 
 namespace Groy\Xeno\File;
 
+use Groy\Xeno\Data\String\SwapX as StrSwapX;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 use Groy\Xeno\Core\DebugX;
@@ -115,4 +116,22 @@ class FileX
 	{
 		return new FileOrganizeX();
 	}
+
+
+
+
+	// • === format »
+	public static function format($file, $option = null)
+	{
+		if ($option === 'ps') {
+			return StrSwapX::ds($file, '/');
+		}
+
+		if ($option === 'ds') {
+			return StrSwapX::ps($file, DIRECTORY_SEPARATOR);
+		}
+
+		return $file;
+	}
+
 } //> end of class ~ FileX
