@@ -4,16 +4,6 @@ namespace Groy\Xeno\Trait;
 
 trait OptionX
 {
-	// • === label »
-	public function label(): string
-	{
-		//NOTE: usage Gender::MALE->label();
-		return $this->name;
-	}
-
-
-
-
 	// • === name »
 	public function name(): string
 	{
@@ -44,12 +34,12 @@ trait OptionX
 
 
 
-	// • === retrieve »
-	public static function retrieve($gender, $prop = 'value'): string
+	// • === choice »
+	public static function choice($choice, $prop = 'value'): string
 	{
-		$gender = strtoupper($gender);
+		$choice = strtoupper($choice);
 		foreach (self::cases() as $case) {
-			if ($case->name === $gender || $case->value === $gender) {
+			if ($case->name === $choice || $case->value === $choice) {
 				if ($prop === 'label') {
 					return $case->label();
 				}
@@ -66,9 +56,16 @@ trait OptionX
 	public static function option()
 	{
 		$options = [];
-		foreach (self::cases() as $case) {
-			$options[$case->value()] = ucwords($case->label());
+
+		$method = 'name';
+		if (method_exists(self::class, 'label')) {
+			$method = 'label';
 		}
+
+		foreach (self::cases() as $case) {
+			$options[$case->value()] = ucwords($case->{$method}());
+		}
+
 		return $options;
 	}
 
