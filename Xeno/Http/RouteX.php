@@ -5,6 +5,7 @@ namespace Groy\Xeno\Http;
 use Illuminate\Support\Facades\Route;
 use Groy\Xeno\Http\RedirectX;
 use Groy\Xeno\Data\StringX;
+use Groy\Xeno\Core\DebugX;
 use Groy\Xeno\Auth\AuthX;
 
 class RouteX
