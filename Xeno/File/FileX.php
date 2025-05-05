@@ -4,9 +4,6 @@ namespace Groy\Xeno\File;
 
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
-use Groy\Xeno\File\File\IsX;
-use Groy\Xeno\File\File\InX;
-use Groy\Xeno\Data\RandomX;
 use Groy\Xeno\Core\DebugX;
 
 
@@ -46,35 +43,37 @@ class FileX
 
 
 
-	// • === is »
-	public static function is($file = null)
+	// • === name »
+	public static function name($file)
 	{
-		if ($file) {
-			return self::exist($file);
-		}
-		return new IsX;
+		return pathinfo($file, PATHINFO_FILENAME);
 	}
 
 
 
 
-	// • === in »
-	public static function in()
+	// • === basename »
+	public static function basename($file)
 	{
-		return new InX();
+		return pathinfo($file, PATHINFO_BASENAME);
 	}
 
 
 
 
-	// • === name » generate filename
-	public static function name($extension = null)
+	// • === extension »
+	public static function extension($file)
 	{
-		$name = RandomX::filename();
-		if (!empty($extension)) {
-			$name .= '.' . $extension;
-		}
-		return $name;
+		return pathinfo($file, PATHINFO_EXTENSION);
+	}
+
+
+
+
+	// • === path »
+	public static function path($file)
+	{
+		return pathinfo($file, PATHINFO_DIRNAME);
 	}
 
 
@@ -84,5 +83,36 @@ class FileX
 	public static function storage($file)
 	{
 		return Storage::url($file);
+	}
+
+
+
+
+	// • === is »
+	public static function is($file = null)
+	{
+		if ($file) {
+			return self::exist($file);
+		}
+
+		return new FileIsX;
+	}
+
+
+
+
+	// • === in »
+	public static function in()
+	{
+		return new FileInX;
+	}
+
+
+
+
+	// • === organize »
+	public static function organize()
+	{
+		return new FileOrganizeX();
 	}
 } //> end of class ~ FileX
