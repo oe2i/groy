@@ -21,6 +21,6 @@ class FileInX
 	// • === theme »
 	public static function theme($file)
 	{
-		return FileIsX::public(FileOrganizeX::theme($file));
+		// return FileIsX::public(FileOrganizeX::theme($file));
 	}
 } //> end of class ~ FileInX
