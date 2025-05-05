@@ -40,9 +40,16 @@ class FileIsX
 
 
 	// • === logo »
-	public static function logo($logo = null)
+	public static function logo($logo = null, $return = false)
 	{
-		return FileInX::theme(FileOrganizeX::logo($logo));
+		$logo = FileOrganizeX::logo($logo);
+		$check = FileIsX::public($logo);
+
+		if ($return && $check) {
+			return $logo;
+		}
+
+		return $check;
 	}
 
 } //> end of class ~ FileIsX
