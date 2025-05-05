@@ -73,9 +73,6 @@ class FormatX
 
 
 
-
-
-
 	// • ==== label → ... »
 	public static function label($label)
 	{
