@@ -4,6 +4,7 @@ namespace Groy\Xeno\Skin;
 
 use Groy\Xeno\Vine\ProjectX;
 use Groy\Xeno\File\FileX;
+use Groy\Xeno\Data\String\SwapX as StrSwapX;
 use Groy\Xeno\Data\StringX;
 use Groy\Xeno\Core\EnvX;
 use Groy\Xeno\Core\DebugX;
@@ -64,6 +65,8 @@ class AssetX
 		if (! empty(self::$path)) {
 			$file = self::$path.$file;
 		}
+
+		$file = StrSwapX::all($file, '::', '/');
 
 		if ($check && ! self::is($file)) {
 			return self::e404($file);
