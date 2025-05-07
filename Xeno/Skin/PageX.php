@@ -2,9 +2,10 @@
 
 namespace Groy\Xeno\Skin;
 
+use Groy\Xeno\Vine\BladeX;
 use Groy\Xeno\Http\RouteX;
 use Groy\Xeno\Data\StringX;
-use Groy\Xeno\Vine\BladeX;
+use Groy\Xeno\Data\String\HasX as StrHasX;
 
 class PageX
 {
@@ -75,7 +76,7 @@ class PageX
 	{
 		// TODO: improve this
 		$title = RouteX::current('name');
-		if (StringX::has()->onlyLetter($title)) {
+		if (StrHasX::onlyLetter($title)) {
 			return $title;
 		}
 		$title = StringX::afterLastAs($title, '.');
