@@ -41,7 +41,7 @@ class BeginX
 	// • === withAny → check if string begin with anything in array or comma separated string » string, boolean
 	public static function withAny($string, $search, $return = false, $case = false)
 	{
-		if (!StringX::verified($string, $search)) {
+		if (!StringX::verified($string) || empty($search)) {
 			return false;
 		}
 
@@ -76,7 +76,7 @@ class BeginX
 
 
 	// • === ifNot »
-	public static function ifNot($string, $search, $case = false, $prefix = null)
+	public static function ifNot($string, $search, $prefix = null, $case = false)
 	{
 		if (!self::with($string, $search, false, $case)) {
 
@@ -95,7 +95,7 @@ class BeginX
 
 
 	// • === ifNotAny »
-	public static function ifNotAny($string, $search, $case = false, $prefix = null)
+	public static function ifNotAny($string, $search, $prefix = null, $case = false)
 	{
 		if (!is_array($search)) {
 			return self::ifNot($string, $search, $case, $prefix);
