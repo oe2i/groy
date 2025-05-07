@@ -750,11 +750,16 @@ class StringX
 
 
 	// • === surround » string before & after needle
-	public static function surround($string, $search, $strip = true, $case = false): bool
+	public static function surround($string, $search, $strip = true, $return = false, $case = false): bool|array
 	{
 		$before = self::before($string, $search, $strip, $case);
 		$after = self::after($string, $search, $strip, $case);
-		return !empty($before) && !empty($after);
+
+		if (!$return) {
+			return !empty($before) && !empty($after);
+		}
+
+		return compact('before', 'after');
 	}
 
 
