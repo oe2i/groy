@@ -15,7 +15,12 @@ use Groy\Xeno\Data\String\StripX;
 
 class StringX
 {
-	// • === is »
+
+
+
+
+
+	// • === is » can be a string
 	public static function is($string, $strict = false)
 	{
 		if ($strict === true) {
@@ -35,13 +40,16 @@ class StringX
 
 
 
-	// • === length »
+
+	// • === length » no of characters or 0
 	public static function length($string)
 	{
 		if (self::is($string)) {
 			return strlen($string);
 		}
+		return 0;
 	}
+
 
 
 
@@ -49,28 +57,47 @@ class StringX
 	// • === empty » is string & empty
 	public static function empty($string)
 	{
-		return self::length($string) === 0;
+		return (self::is($string) && strlen($string) === 0);
 	}
 
 
 
 
-	// • === has » is string & not empty
-	public static function has($string = null)
+
+	// • === valid » is string & not empty
+	public static function valid($string)
 	{
-		if ($string) {
-			return HasX::something($string);
-		}
-		return new HasX;
+		return (self::is($string) && strlen($string) >= 1);
 	}
 
 
 
 
-	// • === encoded » $var is string & encoded
+
+	// • === verified » [$argument] is string & not empty
+	public static function verified(...$argument)
+	{
+		if (empty($argument)) {
+			return false;
+		}
+
+		foreach ($argument as $string) {
+			if (!self::valid($string)) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+
+
+
+
+	// • === encoded » is string & encoded
 	public static function encoded($string)
 	{
-		if (hasx::nothing($string)) {
+		if (!self::verified($string)) {
 			return false;
 		}
 
@@ -101,77 +128,85 @@ class StringX
 
 
 
+
 	// • === reverse »
 	public static function reverse($string)
 	{
 		if (!empty($string)) {
 			return strrev($string);
 		}
-		return null;
+		return $string;
 	}
+
 
 
 
 
 	// • === in »
-	public static function in($string, $needle, $case = true)
+	public static function in($string, $search, $case = true)
 	{
-		if (hasx::nothing($string) || !self::is($needle)) {
+		if (!self::verified($string, $search)) {
 			return false;
 		}
 
 		if ($case) {
-			return $needle === $string || strpos($string, $needle) !== false;
+			return $search === $string || strpos($string, $search) !== false;
 		}
 
-		return $needle == $string || stripos($string, $needle) !== false;
+		return $search == $string || stripos($string, $search) !== false;
 	}
+
 
 
 
 
 	// • === contain »
-	public static function contain($string, $needle, $case = true)
+	public static function contain($string, $search, $case = true)
 	{
-		if (hasx::nothing($string)) {
+		if (!self::verified($string)) {
 			return false;
 		}
 
-		if (strtolower($needle) === 'space') {
+		if (self::verified($search) && (strtolower($search) === 'space')) {
 			return strpos($string, ' ') !== false;
 		}
 
 		if (!$case) {
 			$string = strtolower($string);
-			$needle = strtolower($needle);
+			$search = strtolower($search);
 		}
 
-		return str_contains($string, $needle);
+		return str_contains($string, $search);
 	}
 
 
 
 
+
 	// • === containAny »
-	public static function containAny($string, array $needles, $case = true)
+	public static function containAny($string, $search, $case = true)
 	{
-		if (hasx::nothing($string)) {
+		if (!self::verified($string) || empty($search)) {
 			return false;
+		}
+
+		if (!is_array($search)) {
+			return self::contain($string, $search, $case);
 		}
 
 		if (!$case) {
 			$string = strtolower($string);
-			$needles = array_map('strtolower', $needles);
+			$search = array_map('strtolower', $search);
 		}
 
-		array_walk($needles, function (&$item) {
+		array_walk($search, function (&$item) {
 			if (strtolower($item) === 'space') {
 				$item = ' ';
 			}
 		});
 
-		foreach ($needles as $needle) {
-			if (str_contains($string, $needle)) {
+		foreach ($search as $needle) {
+			if (str_contains($string, $search)) {
 				return true;
 			}
 		}
@@ -182,14 +217,17 @@ class StringX
 
 
 
+
 	// • === compare »
-	public static function compare($string, $needle, $strict = true)
+	public static function compare($string, $search, $strict = true)
 	{
-		if (hasx::nothing($string) || hasx::nothing($needle)) {
+		if (!self::verified($string, $search)) {
 			return false;
 		}
-		return $strict ? $string === $needle : strtolower($string) == strtolower($needle);
+
+		return $strict ? $string === $search : strtolower($string) == strtolower($search);
 	}
+
 
 
 
@@ -197,7 +235,7 @@ class StringX
 	// • === nth » nth character
 	public static function nth($string, $nth)
 	{
-		if (hasx::nothing($string)) {
+		if (!self::verified($string)) {
 			return false;
 		}
 
@@ -218,6 +256,7 @@ class StringX
 
 
 
+
 	// • === first »
 	public static function first($string)
 	{
@@ -227,22 +266,25 @@ class StringX
 
 
 
+
 	// • === last »
 	public static function last($string)
 	{
-		if (hasx::nothing($string)) {
+		if (!self::verified($string)) {
 			return false;
 		}
+
 		return substr($string, -1);
 	}
 
 
 
 
+
 	// • === occurrence » count
-	public static function occurrence($string, $needle, $offset = 0, $length = null)
+	public static function occurrence($string, $search, $offset = 0, $length = null)
 	{
-		if (hasx::nothing($string) || hasx::nothing($needle) || !is_numeric($offset)) {
+		if (!self::verified($string, $search) || !is_numeric($offset)) {
 			return false;
 		}
 
@@ -263,8 +305,10 @@ class StringX
 				$length = ($stringLength - $offset);
 			}
 		}
-		return substr_count($string, $needle, $offset, $length);
+
+		return substr_count($string, $search, $offset, $length);
 	}
+
 
 
 
@@ -272,7 +316,7 @@ class StringX
 	// • === occurrenceNth » get position of nth occurrence
 	public static function occurrenceNth($string, $character, $nth)
 	{
-		if (hasx::nothing($string) || hasx::nothing($character) || !is_numeric($nth)) {
+		if (!self::verified($string, $character) || !is_numeric($nth)) {
 			return false;
 		}
 
@@ -292,10 +336,11 @@ class StringX
 
 
 
+
 	// • === occurrenceGroupNth »
 	public static function occurrenceGroupNth($string, $separator, $nth, $return = 'nth')
 	{
-		if (hasx::nothing($string) || !is_numeric($nth)) {
+		if (!self::verified($string) || !is_numeric($nth)) {
 			return false;
 		}
 
@@ -326,11 +371,23 @@ class StringX
 
 
 
+
+	// • === has »
+	public static function has()
+	{
+		return new HasX;
+	}
+
+
+
+
+
 	// • === swap »
 	public static function swap()
 	{
 		return new SwapX;
 	}
+
 
 
 
@@ -344,11 +401,13 @@ class StringX
 
 
 
+
 	// • === strip »
 	public static function strip()
 	{
 		return new StripX;
 	}
+
 
 
 
@@ -362,11 +421,13 @@ class StringX
 
 
 
+
 	// • === case »
 	public static function case()
 	{
 		return new CaseX;
 	}
+
 
 
 
@@ -380,11 +441,13 @@ class StringX
 
 
 
+
 	// • === end »
 	public static function end()
 	{
 		return new EndX;
 	}
+
 
 
 
@@ -398,10 +461,11 @@ class StringX
 
 
 
+
 	// • === noChar → remove special characters
 	public static function noChar($string, $append = null)
 	{
-		if (hasx::nothing($string)) {
+		if (!self::verified($string)) {
 			return false;
 		}
 
@@ -420,10 +484,11 @@ class StringX
 
 
 
+
 	// • === separate » space string based on characters
 	public static function separate($string, string|array $separator = ['/', '-', '_', '.'])
 	{
-		if (hasx::nothing($string) || empty($separator)) {
+		if (!self::verified($string) || empty($separator)) {
 			return false;
 		}
 
@@ -441,11 +506,13 @@ class StringX
 
 
 
+
 	// • === singular »
 	public static function singular($string)
 	{
 		return Str::singular($string);
 	}
+
 
 
 
@@ -459,10 +526,11 @@ class StringX
 
 
 
+
 	// • === toArray → string to array »
 	public static function toArray($string, $separator = null, $case = false)
 	{
-		if (HasX::nothing($string)) {
+		if (!self::verified($string)) {
 			return false;
 		}
 
@@ -484,10 +552,11 @@ class StringX
 
 
 
+
 	// • === toObject → string to object »
 	public static function toObject($string, $separator, $keySeparator)
 	{
-		if (HasX::nothing($string) || !self::is($separator)) {
+		if (!self::verified($string) || !self::is($separator)) {
 			return false;
 		}
 
@@ -511,89 +580,101 @@ class StringX
 
 
 
+
 	// • === before → string before character
-	public static function before($string, $needle, $strip = true, $case = false)
+	public static function before($string, $search, $strip = true, $case = false)
 	{
-		if (hasx::nothing($string) || !self::in($string, $needle, $case)) {
+		if (!self::verified($string) || !self::contain($string, $search, $case)) {
 			return false;
 		}
 
 		if (!$case) {
-			$pos = stripos($string, $needle);
+			$pos = stripos($string, $search);
 		} else {
-			$pos = strpos($string, $needle);
+			$pos = strpos($string, $search);
 		}
+
 		if ($pos && $pos != 0) {
 			$res = substr($string, 0, $pos);
 		}
+
 		if (!$strip) {
-			$res = $res . $needle;
+			$res = $res . $search;
 		}
+
 		if (isset($res)) {
 			return $res;
 		}
+
+		return false;
 	}
+
 
 
 
 
 	// • === beforeAs → string before character or the string
-	public static function beforeAs($string, $needle, $strip = true, $case = false)
+	public static function beforeAs($string, $search, $strip = true, $case = false)
 	{
-		$stringBefore = self::before($string, $needle, $strip, $case);
-		if ($stringBefore === false) {
+		$res = self::before($string, $search, $strip, $case);
+		if ($res === false) {
 			return $string;
 		}
-		return $stringBefore;
+		return $res;
 	}
+
 
 
 
 
 	// • === beforeAnyAs »
-	public static function beforeAnyAs($string, array $needle, $strip = true, $case = false)
+	public static function beforeAnyAs($string, array $search, $strip = true, $case = false)
 	{
-		if (!empty($needle)) {
-			foreach ($needle as $seed) {
-				$stringBefore = self::before($string, $seed, $strip, $case);
-				if ($stringBefore) {
-					return $stringBefore;
+		if (!empty($search)) {
+			foreach ($search as $needle) {
+				$res = self::before($string, $needle, $strip, $case);
+				if ($res) {
+					return $res;
 				}
 			}
 		}
 		return $string;
 	}
+
 
 
 
 
 	// • === after → string after character
-	public static function after($string, $needle, $strip = true, $case = false, $occurrence = 'first')
+	public static function after($string, $search, $strip = true, $case = false, $occurrence = 'first')
 	{
-		if (hasx::nothing($string) || !self::in($string, $needle, $case)) {
+		if (!self::verified($string) || !self::contain($string, $search, $case)) {
 			return false;
 		}
 
 		if ($case) {
-			$string = strstr($string, $needle);
+			$string = strstr($string, $search);
 		} else {
-			$string = stristr($string, $needle);
+			$string = stristr($string, $search);
 		}
 
 		if ($string !== false) {
 			if ($strip === true && $occurrence === 'first') {
-				$string = SwapX::first($string, $needle, '', $case);
+				$string = SwapX::first($string, $search, '', $case);
 			} elseif ($occurrence === 'last') {
+
 				if ($case) {
-					$pos = strrpos($string, $needle);
+					$pos = strrpos($string, $search);
 				} else {
-					$pos = strripos($string, $needle);
+					$pos = strripos($string, $search);
 				}
+
 				if ($pos !== false) {
-					$string = substr($string, $pos + strlen($needle));
+					$string = substr($string, $pos + strlen($search));
 				}
+
 				if ($strip === false) {
-					$string = $needle . $string;
+					$string = $search . $string;
 				}
 			}
 		}
@@ -604,70 +685,83 @@ class StringX
 
 
 
+
 	// • === afterFirst → string after first occurrence of a character » string, false
-	public static function afterFirst($string, $needle, $strip = true, $case = false)
+	public static function afterFirst($string, $search, $strip = true, $case = false)
 	{
-		return self::after($string, $needle, $strip, $case, 'first');
+		return self::after($string, $search, $strip, $case, 'first');
 	}
+
 
 
 
 
 	// • === afterLast → string after last occurrence of a character » string, false
-	public static function afterLast($string, $needle, $strip = true, $case = false)
+	public static function afterLast($string, $search, $strip = true, $case = false)
 	{
-		return self::after($string, $needle, $strip, $case, 'last');
+		return self::after($string, $search, $strip, $case, 'last');
 	}
+
 
 
 
 
 	// • === afterAs → string after character or the string
-	public static function afterAs($string, $needle, $strip = true, $case = false, $occurrence = 'first')
+	public static function afterAs($string, $search, $strip = true, $case = false, $occurrence = 'first')
 	{
-		$stringAfter = self::after($string, $needle, $strip, $case, $occurrence);
-		if ($stringAfter === false) {
+		$res = self::after($string, $search, $strip, $case, $occurrence);
+
+		if ($res === false) {
 			return $string;
 		}
-		return $stringAfter;
+
+		return $res;
 	}
+
 
 
 
 
 	// • === afterFirstAs → string after character or the string
-	public static function afterFirstAs($string, $needle, $strip = true, $case = false)
+	public static function afterFirstAs($string, $search, $strip = true, $case = false)
 	{
-		$stringAfter = self::afterFirst($string, $needle, $strip, $case);
-		if (!$stringAfter) {
+		$res = self::afterFirst($string, $search, $strip, $case);
+
+		if (!$res) {
 			return $string;
 		}
-		return $stringAfter;
+
+		return $res;
 	}
+
 
 
 
 
 	// • === afterLastAs → string after character or the string
-	public static function afterLastAs($string, $needle, $strip = true, $case = false)
+	public static function afterLastAs($string, $search, $strip = true, $case = false)
 	{
-		$stringAfter = self::afterLast($string, $needle, $strip, $case);
-		if (!$stringAfter) {
+		$res = self::afterLast($string, $search, $strip, $case);
+
+		if (!$res) {
 			return $string;
 		}
-		return $stringAfter;
+
+		return $res;
 	}
+
 
 
 
 
 	// • === surround » string before & after needle
-	public static function surround($string, $needle, $strip = true, $case = false): bool
+	public static function surround($string, $search, $strip = true, $case = false): bool
 	{
-		$before = self::before($string, $needle, $strip, $case);
-		$after = self::after($string, $needle, $strip, $case);
+		$before = self::before($string, $search, $strip, $case);
+		$after = self::after($string, $search, $strip, $case);
 		return !empty($before) && !empty($after);
 	}
+
 
 
 
@@ -675,11 +769,12 @@ class StringX
 	// • === blur → blur censored character & vice-versa
 	public static function blur($string, $library, $blur = '***', $case = false)
 	{
-		if (hasx::nothing($string) || empty($library)) {
+		if (!self::verified($string) || empty($library)) {
 			return false;
 		}
 
 		$words = explode(" ", $string);
+
 		if (!is_array($library)) {
 			if (self::contain($library, '|')) {
 				$library = SwapX::all($library, ' | ', '|');
@@ -707,10 +802,11 @@ class StringX
 
 
 
+
 	// • === match → match pattern » boolean, string, array
 	public static function match($string, $pattern, $return = 'boolean', $flags = 0, $offset = 0)
 	{
-		if (HasX::nothing($string) || HasX::nothing($pattern)) {
+		if (!self::verified($string) || HasX::nothing($pattern)) {
 			return false;
 		}
 
