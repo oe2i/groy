@@ -2,6 +2,8 @@
 
 namespace Groy\Xeno\Data\String;
 
+use Groy\Xeno\Data\StringX;
+
 class SpaceX
 {
 	// • === no → remove any space »
@@ -12,15 +14,23 @@ class SpaceX
 
 
 
-	// • === single → allow single spaces » boolean
+
+
+	// • === single » allow single spaces
 	public static function single($string)
 	{
+		if (!StringX::valid($string)) {
+			return false;
+		}
+
 		return preg_replace('/\s+/', ' ', $string);
 	}
 
 
 
-	// • === upper →
+
+
+	// • === upper »
 	public static function upper($string)
 	{
 		return CaseX::upperToSpace($string);
@@ -28,7 +38,9 @@ class SpaceX
 
 
 
-	// • === lower →
+
+
+	// • === lower »
 	public static function lowerToSpace($string)
 	{
 		return CaseX::lowerToSpace($string);
