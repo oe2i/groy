@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Route;
 use Groy\Xeno\Vine\BladeX;
 use Groy\Xeno\Skin\ThemeX;
 use Groy\Xeno\Skin\PageX;
-use Groy\Xeno\Data\StringX;
+use Groy\Xeno\Data\String\HasX as StrHasX;
 
 class SiteX
 {
@@ -32,7 +32,7 @@ class SiteX
 
 
 		if (!$view) {
-			if (StringX::has()->onlyLetter($route)) {
+			if (StrHasX::onlyLetter($route)) {
 				$view = $route;
 			}
 		}
@@ -40,7 +40,7 @@ class SiteX
 		if (!$name) {
 			if ($view === 'index') {
 				$name = 'index';
-			} elseif (StringX::has()->onlyLetter($view)) {
+			} elseif (StrHasX::onlyLetter($view)) {
 				$name = 'site.' . $view;
 			}
 		}
