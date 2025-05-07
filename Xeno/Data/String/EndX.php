@@ -3,14 +3,14 @@
 namespace Groy\Xeno\Data\String;
 
 use Groy\Xeno\Data\StringX;
-use Groy\Xeno\Data\Array\ValueX;
+use Groy\Xeno\Data\Array\ValueX as StrValueX;
 
 class EndX
 {
-	// • === with → check string ending » boolean
-	public static function with($string, $end, $case = false)
+	// • === with »
+	public static function with($string, $search, $return = false, $case = false): bool|int|string
 	{
-		if (HasX::nothing($string) || HasX::nothing($end)) {
+		if (!StringX::verified($string, $search)) {
 			return false;
 		}
 
@@ -18,51 +18,58 @@ class EndX
 
 		if (!$case) {
 			$string = mb_strtolower($string);
-			$end = mb_strtolower($end);
+			$search = mb_strtolower($search);
 		}
 
 		if (function_exists('str_ends_with') && $case) {
-			return str_ends_with($string, $end);
+			$res = str_ends_with($string, $search);
+		} else {
+			$length = strlen($search);
+
+			if ($length === 0) {
+				return true;
+			}
+
+			$res = substr($string, -$length) === $search;
 		}
 
-		$length = strlen($end);
-		if ($length === 0) {
-			return true;
+		if ($return && $res) {
+			return $search;
 		}
 
-		return substr($string, -$length) === $end;
+		return $res;
 	}
 
 
 
+
+
 	// • === withAny → check if string end with anything in array or comma separated string » string, boolean
-	public static function withAny($string, $end, $case = false, $return = false)
+	public static function withAny($string, $search, $return = false, $case = false)
 	{
-		if (HasX::nothing($string) || empty($end)) {
+		if (!StringX::valid($string) || empty($search)) {
 			return false;
 		}
 
-		if (is_string($end)) {
-			if (StringX::in($end, ',')) {
-				$end = array_map('trim', explode(',', $end));
+		if (is_string($search)) {
+			if (StringX::in($search, ',')) {
+				$search = array_map('trim', explode(',', $search));
 			} else {
-				$check = self::with($string, $end, $case);
-				if ($return && $check) {
-					return $end;
-				}
-				return $check;
+				return self::with($string, $search, $return, $case);
 			}
 		}
 
-		if (!is_array($end)) {
+		if (!is_array($search)) {
 			return false;
 		}
 
-		foreach ($end as $suffix) {
-			if (self::with($string, $suffix, $case) === true) {
+		foreach ($search as $needle) {
+			if (self::with($string, $needle, false, $case) === true) {
+
 				if ($return) {
-					return $suffix;
+					return $needle;
 				}
+
 				return true;
 			}
 		}
@@ -73,29 +80,45 @@ class EndX
 
 
 
+
 	// • === ifNot »
-	public static function ifNot($string, $end, $case = false)
+	public static function ifNot($string, $search, $suffix = null, $case = false)
 	{
-		if (!self::with($string, $end, $case)) {
-			return $string . $end;
+		if (!self::with($string, $search, false, $case)) {
+
+			if ($suffix) {
+				return $string . $suffix;
+			}
+
+			return $string . $search;
 		}
+
 		return $string;
 	}
+
 
 
 
 
 	// • === ifNotAny »
-	public static function ifNotAny($string, $end, $case = false)
+	public static function ifNotAny($string, $search, $suffix = null, $case = false)
 	{
-		if (!self::withAny($string, $end, $case)) {
-			if (is_array($end)) {
-				$end = ValueX::first($end);
-			}
-			return $string . $end;
+		if (!is_array($search)) {
+			return self::ifNot($string, $search, $suffix, $case);
 		}
+
+		if (!self::withAny($string, $search, false, $case)) {
+
+			if ($suffix) {
+				return $string . $suffix;
+			}
+
+			return $string . StrValueX::first($search);
+		}
+
 		return $string;
 	}
+
 
 
 
@@ -103,9 +126,10 @@ class EndX
 	// • === newline » check if string ends with newline
 	public static function newline($string)
 	{
-		if (HasX::nothing($string)) {
+		if (!StringX::valid($string)) {
 			return false;
 		}
+
 		return preg_match('/(\r?\n)$/', $string);
 	}
 } //> end of class ~ EndX
