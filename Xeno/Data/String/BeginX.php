@@ -58,7 +58,7 @@ class BeginX
 		}
 
 		foreach ($search as $needle) {
-			if (self::with($string, $needle, $case, false) === true) {
+			if (self::with($string, $needle, false, $case) === true) {
 
 				if ($return) {
 					return $needle;
@@ -98,7 +98,7 @@ class BeginX
 	public static function ifNotAny($string, $search, $prefix = null, $case = false)
 	{
 		if (!is_array($search)) {
-			return self::ifNot($string, $search, $case, $prefix);
+			return self::ifNot($string, $search, $prefix, $case);
 		}
 
 		if (!self::withAny($string, $search, false, $case)) {
