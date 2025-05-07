@@ -220,11 +220,7 @@ class CaseX
 	// • === isUpper »
 	public static function isUpper($string)
 	{
-		if (!StringX::valid($string)) {
-			return false;
-		}
-
-		return ctype_upper($string);
+		return self::is($string, 'upper');
 	}
 
 
@@ -234,11 +230,7 @@ class CaseX
 	// • === isLower »
 	public static function isLower($string)
 	{
-		if (!StringX::valid($string)) {
-			return false;
-		}
-
-		return ctype_lower($string);
+		return self::is($string, 'lower');
 	}
 
 
@@ -248,11 +240,37 @@ class CaseX
 	// • === isMixed »
 	public static function isMixed($string)
 	{
-		if (!StringX::valid($string)) {
-			return false;
-		}
+		return self::is($string, 'mixed');
+	}
 
-		return (preg_match('/[a-z]/', $string) && preg_match('/[A-Z]/', $string));
+
+
+
+
+	// • === hasUpper »
+	public static function hasUpper($string)
+	{
+		return self::has($string, 'upper');
+	}
+
+
+
+
+
+	// • === hasLower »
+	public static function hasLower($string)
+	{
+		return self::has($string, case: 'lower');
+	}
+
+
+
+
+
+	// • === hasMixed »
+	public static function hasMixed($string)
+	{
+		return self::has($string, case: 'mixed');
 	}
 
 
@@ -260,7 +278,7 @@ class CaseX
 
 
 	// • === getUpper → get upper case letter & positions » array, boolean [false]
-	public static function getUpper($string)
+	public static function grabUpper($string)
 	{
 		return self::grab($string, 'upper');
 	}
@@ -270,9 +288,57 @@ class CaseX
 
 
 	// • === getLower → get lower case letter & positions » array, boolean [false]
-	public static function getLower($string)
+	public static function grabLower($string)
 	{
 		return self::grab($string, 'lower');
+	}
+
+
+
+
+
+	// • === is »
+	private static function is($string, $case)
+	{
+		if (!StringX::verified($string, $case)) {
+			return false;
+		}
+
+		if ($case === 'upper') {
+			return ctype_upper($string);
+		}
+
+		if ($case === 'lower') {
+			return ctype_lower($string);
+		}
+
+		if ($case === 'mixed') {
+			return (preg_match('/[a-z]/', $string) && preg_match('/[A-Z]/', $string));
+		}
+	}
+
+
+
+
+
+	// • === has »
+	private static function has($string, $case)
+	{
+		if (!StringX::verified($string, $case)) {
+			return false;
+		}
+
+		if ($case === 'upper') {
+			return preg_match('/[A-Z]/', $string);
+		}
+
+		if ($case === 'lower') {
+			return preg_match('/[a-z]/', $string);
+		}
+
+		if ($case === 'mixed') {
+			return (preg_match('/[a-z]/', $string) && preg_match('/[A-Z]/', $string));
+		}
 	}
 
 
