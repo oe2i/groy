@@ -3,14 +3,14 @@
 namespace Groy\Xeno\Data\String;
 
 use Groy\Xeno\Data\StringX;
-use Groy\Xeno\Data\Array\ValueX;
+use Groy\Xeno\Data\Array\ValueX as ArrValueX;
 
 class BeginX
 {
-	// • === with → check string beginning » boolean
-	public static function with($string, $begin, $case = false)
+	// • === with »
+	public static function with($string, $search, $return = false, $case = false): bool|int|string
 	{
-		if (HasX::nothing($string) || HasX::nothing($begin)) {
+		if (!StringX::verified($string, $search)) {
 			return false;
 		}
 
@@ -18,40 +18,52 @@ class BeginX
 
 		if (!$case) {
 			$string = mb_strtolower($string);
-			$begin = mb_strtolower($begin);
+			$search = mb_strtolower($search);
 		}
 
 		if (function_exists('str_starts_with') && $case) {
-			return str_starts_with($string, $begin);
+			$res = str_starts_with($string, $search);
+		} else {
+			$res = strpos($string, $search) === 0;
 		}
 
-		return strpos($string, $begin) === 0;
+		if ($return && $res) {
+			return $search;
+		}
+
+		return $res;
 	}
 
 
 
 
+
 	// • === withAny → check if string begin with anything in array or comma separated string » string, boolean
-	public static function withAny($string, $begin, $case = false)
+	public static function withAny($string, $search, $return = false, $case = false)
 	{
-		if (HasX::nothing($string) || empty($begin)) {
+		if (!StringX::verified($string, $search)) {
 			return false;
 		}
 
-		if (is_string($begin)) {
-			if (StringX::in($begin, ',')) {
-				$begin = array_map('trim', explode(',', $begin));
+		if (is_string($search)) {
+			if (StringX::in($search, ',')) {
+				$search = array_map('trim', explode(',', $search));
 			} else {
-				return self::with($string, $begin, $case);
+				return self::with($string, $search, $return, $case);
 			}
 		}
 
-		if (!is_array($begin)) {
+		if (!is_array($search)) {
 			return false;
 		}
 
-		foreach ($begin as $prefix) {
-			if (self::with($string, $prefix, $case) === true) {
+		foreach ($search as $needle) {
+			if (self::with($string, $needle, $case, false) === true) {
+
+				if ($return) {
+					return $needle;
+				}
+
 				return true;
 			}
 		}
@@ -62,27 +74,56 @@ class BeginX
 
 
 
-	// • === ifNot » add begning if it is not already there
-	public static function ifNot($string, $begin, $case = false)
+
+	// • === ifNot »
+	public static function ifNot($string, $search, $case = false, $prefix = null)
 	{
-		if (HasX::something($string) && HasX::something($begin) && !self::with($string, $begin, $case)) {
-			return $begin . $string;
+		if (!self::with($string, $search, false, $case)) {
+
+			if ($prefix) {
+				return $prefix . $string;
+			}
+
+			return $search . $string;
 		}
+
 		return $string;
 	}
 
 
 
 
+
 	// • === ifNotAny »
-	public static function ifNotAny($string, $begin, $case = false)
+	public static function ifNotAny($string, $search, $case = false, $prefix = null)
 	{
-		if (!self::withAny($string, $begin, $case)) {
-			if (is_array($begin)) {
-				$begin = ValueX::first($begin);
-			}
-			return $begin . $string;
+		if (!is_array($search)) {
+			return self::ifNot($string, $search, $case, $prefix);
 		}
+
+		if (!self::withAny($string, $search, false, $case)) {
+
+			if ($prefix) {
+				return $prefix . $string;
+			}
+
+			return ArrValueX::first($search) . $string;
+		}
+
 		return $string;
+	}
+
+
+
+
+
+	// • === newline »
+	public static function newline($string)
+	{
+		if (!StringX::verified($string)) {
+			return false;
+		}
+
+		return preg_match('/^(?!\r\n|\r|\n)/', $string);
 	}
 } //> end of class ~ BeginX
