@@ -41,7 +41,7 @@ class BeginX
 	// • === withAny → check if string begin with anything in array or comma separated string » string, boolean
 	public static function withAny($string, $search, $return = false, $case = false)
 	{
-		if (!StringX::verified($string) || empty($search)) {
+		if (!StringX::valid($string) || empty($search)) {
 			return false;
 		}
 
@@ -120,7 +120,7 @@ class BeginX
 	// • === newline »
 	public static function newline($string)
 	{
-		if (!StringX::verified($string)) {
+		if (!StringX::valid($string)) {
 			return false;
 		}
 
