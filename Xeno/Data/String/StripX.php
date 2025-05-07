@@ -2,40 +2,53 @@
 
 namespace Groy\Xeno\Data\String;
 
+use Groy\Xeno\Data\StringX;
+
 class StripX
 {
-	// • === all → remove all occurrence from string »
-	public static function all($string, $needle, $case = false)
+	// • === all » remove all occurrence from string
+	public static function all($string, $search, $case = false)
 	{
-		return SwapX::all($string, $needle, '', $case);
+		return SwapX::all($string, $search, '', $case);
 	}
 
 
 
-	// • === first → remove first occurrence from string »
-	public static function first($string, $needle, $case = false)
+
+
+	// • === first » remove first occurrence from string
+	public static function first($string, $search, $case = false)
 	{
-		return SwapX::first($string, $needle, '', $case);
+		return SwapX::first($string, $search, '', $case);
 	}
 
 
 
-	// • === last → remove last occurrence from string »
-	public static function last($string, $needle, $case = false)
+
+
+	// • === last » remove last occurrence from string
+	public static function last($string, $search, $case = false)
 	{
-		return SwapX::last($string, $needle, '', $case);
+		return SwapX::last($string, $search, '', $case);
 	}
 
 
 
-	// • === nth → remove nth character from string »
+
+
+	// • === nth » remove nth character from string
 	public static function nth($string, $nth, $number = null)
 	{
 		$length = strlen($string);
 		$nth = (int) $nth;
 		$number = isset($number) ? (int) $number : 1;
 
-		if (HasX::nothing($string) || $nth <= 0 || $nth > $length || $number <= 0) {
+		if (
+			!StringX::valid($string)
+			|| $nth <= 0
+			|| $nth > $length
+			|| $number <= 0
+		) {
 			return $string;
 		}
 
@@ -52,6 +65,10 @@ class StripX
 	// • === paragraph » remove empty paragraph
 	public static function paragraph($string)
 	{
+		if (!StringX::valid($string)) {
+			return false;
+		}
+
 		return preg_replace('/<p>\s*<\/p>/', '', $string);
 	}
 
@@ -61,6 +78,10 @@ class StripX
 	// • === newline » remove empty line
 	public static function newline($string)
 	{
+		if (!StringX::valid($string)) {
+			return false;
+		}
+
 		return preg_replace('/^\s*$(\r\n|\r|\n)/m', '', $string);
 	}
 
@@ -68,11 +89,12 @@ class StripX
 
 
 	// • === beginIf » if string begins with needle
-	public static function beginIf($string, $needle, $case = false)
+	public static function beginIf($string, $search, $case = false)
 	{
-		if (BeginX::with($string, $needle, $case)) {
-			$string = self::first($string, $needle, $case);
+		if (BeginX::with($string, $search, $case)) {
+			$string = self::first($string, $search, $case);
 		}
+
 		return $string;
 	}
 
@@ -80,11 +102,12 @@ class StripX
 
 
 	// • === endIf » if string ends with needle
-	public static function endIf($string, $needle, $case = false)
+	public static function endIf($string, $search, $case = false)
 	{
-		if (EndX::with($string, $needle, $case)) {
-			$string = self::last($string, $needle, $case);
+		if (EndX::with($string, $search, $case)) {
+			$string = self::last($string, $search, $case);
 		}
+
 		return $string;
 	}
 } //> end of class ~ StripX
