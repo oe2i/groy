@@ -9,135 +9,147 @@ class HasX
 	// • === something »
 	public static function something($string)
 	{
-		return StringX::length($string) > 0;
+		return StringX::valid($string);
 	}
+
+
 
 
 
 	// • === nothing »
 	public static function nothing($string)
 	{
-		return (self::something($string) === false);
+		return StringX::empty($string);
 	}
+
+
 
 
 
 	// • === number »
 	public static function number($string)
 	{
-		if (self::nothing($string)) {
+		if (!StringX::valid($string)) {
 			return false;
 		}
+
 		return preg_match('/\d/', $string) === 1;
 	}
+
+
 
 
 
 	// • === character »
 	public static function character($string, $ignoreSpace = true)
 	{
-		if (self::nothing($string)) {
+		if (!StringX::valid($string)) {
 			return false;
 		}
+
 		if ($ignoreSpace) {
 			return preg_match('/[^a-zA-Z0-9\s]/', $string) === 1;
 		}
+
 		return preg_match('/[^a-zA-Z0-9]/', $string) === 1;
 	}
+
+
 
 
 
 	// • === letter »
 	public static function letter($string)
 	{
-		if (self::nothing($string)) {
+		if (!StringX::valid($string)) {
 			return false;
 		}
+
 		return preg_match('/[a-zA-Z]/', $string) === 1;
 	}
+
+
 
 
 
 	// • === space »
 	public static function space($string)
 	{
-		if (self::nothing($string)) {
+		if (!StringX::valid($string)) {
 			return false;
 		}
+
 		return (strpos(trim($string), ' ') !== false);
 	}
+
+
 
 
 
 	// • === newline »
 	public static function newline($string)
 	{
-		if (self::nothing($string)) {
+		if (!StringX::valid($string)) {
 			return false;
 		}
+
 		return (strpos($string, "\n") !== false || strpos($string, "\r\n") !== false || strpos($string, "\r") !== false);
 	}
+
+
 
 
 
 	// • === paragraph »
 	public static function paragraph($string)
 	{
-		if (self::nothing($string)) {
+		if (!StringX::valid($string)) {
 			return false;
 		}
+
 		return (preg_match('/(\R){2,}/', $string));
 	}
 
 
 
 
-	// • === mixedcase »
-	public static function mixedcase($var)
+
+	// • === uppercase »
+	public static function uppercase($string)
 	{
-		return (preg_match('/[a-z]/', $var) && preg_match('/[A-Z]/', $var));
+		return CaseX::hasUpper($string);
 	}
+
 
 
 
 
 	// • === lowercase »
-	public static function lowercase($var)
+	public static function lowercase($string)
 	{
-		return preg_match('/[a-z]/', $var);
+		return CaseX::hasLower($string);
 	}
 
 
 
 
-	// • === uppercase »
-	public static function uppercase($var)
+
+	// • === mixedcase »
+	public static function mixedcase($string)
 	{
-		return preg_match('/[A-Z]/', $var);
+		return CaseX::hasMixed($string);
 	}
 
 
 
 
-	// • === onlyLetter » can be used for One-Word check
-	public static function onlyLetter($string)
+
+	// • === onlyUppercase »
+	public static function onlyUppercase($string)
 	{
-		if (self::nothing($string)) {
-			return false;
-		}
-		return ctype_alpha($string);
+		return self::only($string, 'uppercase');
 	}
 
-
-
-	// • === onlyNumber »
-	public static function onlyNumber($string)
-	{
-		if (self::nothing($string)) {
-			return false;
-		}
-		return ctype_digit($string);
-	}
 
 
 
@@ -145,21 +157,73 @@ class HasX
 	// • === onlyLowercase »
 	public static function onlyLowercase($string)
 	{
-		if (self::nothing($string)) {
-			return false;
-		}
-		return ctype_lower($string);
+		return self::only($string, 'lowercase');
 	}
 
 
 
-	// • === onlyUppercase »
-	public static function onlyUppercase($string)
+
+
+	// • === onlyAlphaNumeric »
+	public static function onlyAlphaNumeric($string)
 	{
-		if (self::nothing($string)) {
+		return self::only($string, 'alphanumeric');
+	}
+
+
+
+
+
+	// • === onlyLetter » can be used for One-Word check
+	public static function onlyLetter($string)
+	{
+		return self::only($string, 'letter');
+	}
+
+
+
+
+
+	// • === onlyNumber »
+	public static function onlyNumber($string)
+	{
+		return self::only($string, 'number');
+	}
+
+
+
+
+
+	// • === only »
+	private static function only($string, $flag)
+	{
+		if (!StringX::verified($string, $flag)) {
 			return false;
 		}
-		return ctype_upper($string);
+
+		if ($flag === 'uppercase') {
+			return CaseX::isUpper($string);
+		}
+
+		if ($flag === 'lowercase') {
+			return CaseX::isLower($string);
+		}
+
+		if ($flag === 'mixedcase') {
+			return CaseX::isMixed($string);
+		}
+
+		if ($flag === 'alphanumeric') {
+			return ctype_alnum($string);
+		}
+
+		if ($flag === 'letter') {
+			return ctype_alpha($string);
+		}
+
+		if ($flag === 'number') {
+			return ctype_digit($string);
+		}
 	}
 
 } //> end of class ~ HasX
