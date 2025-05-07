@@ -2,11 +2,17 @@
 
 namespace Groy\Xeno\Data\String;
 
+use Groy\Xeno\Data\StringX;
+
 class AcronymX
 {
 	// • === has »
 	public static function has($string)
 	{
+		if(!StringX::verified($string)){
+			return false;
+		}
+
 		return preg_match('/[A-Z]{2,}/', $string);
 	}
 
@@ -17,6 +23,10 @@ class AcronymX
 	// • === grab » used to grab upper case words
 	public static function grab($string)
 	{
+		if(!StringX::verified($string)){
+			return false;
+		}
+
 		preg_match_all('/[A-Z]{2,}/', $string, $matches, PREG_OFFSET_CAPTURE);
 
 		if (empty($matches[0])) {
