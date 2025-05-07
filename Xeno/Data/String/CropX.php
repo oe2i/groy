@@ -6,10 +6,10 @@ use Groy\Xeno\Data\StringX;
 
 class CropX
 {
-	// • === text → trim edges or character(s) »
-	public static function text($string, $needle = 'space', $case = false, $repeated = false)
+	// • === text » trim edges or character(s)
+	public static function text($string, $needle = 'space', $case = false, $recursive = false)
 	{
-		if (!StringX::has($string) || !StringX::has($needle)) {
+		if (!StringX::verified($string, $needle)) {
 			return false;
 		}
 
@@ -17,7 +17,7 @@ class CropX
 			return trim($string);
 		}
 
-		if (StringX::in($string, $needle, $case)) {
+		if (StringX::contain($string, $needle, $case)) {
 
 			$length = strlen($needle);
 			if ($length === 1) {
@@ -25,7 +25,7 @@ class CropX
 			}
 
 			if ($length > 1) {
-				if (!$repeated) {
+				if (!$recursive) {
 					$pattern = '/^' . preg_quote($needle, '/') . '|' . preg_quote($needle, '/') . '$/';
 					return preg_replace($pattern, '', $string);
 				} else {
@@ -49,42 +49,56 @@ class CropX
 
 
 
-	// • === begin → remove beginning of string »
-	public static function begin($string, $needle, $case = false)
+
+	// • === begin » remove beginning of string
+	public static function begin($string, $search, $case = false)
 	{
-		if (BeginX::with($string, $needle)) {
-			return StripX::first($string, $needle, $case);
+		if (BeginX::with($string, $search)) {
+			return StripX::first($string, $search, $case);
 		}
+
 		return $string;
 	}
 
 
 
 
-	// • === beginNth → crop from beginning of string to nth position »
+
+	// • === end » remove end of string
+	public static function end($string, $search, $case = false)
+	{
+		if (EndX::with($string, $search)) {
+			return StripX::last($string, $search, $case);
+		}
+
+		return $string;
+	}
+
+
+
+
+
+	// • === beginNth » crop from beginning of string to nth position
 	public static function beginNth($string, $nth)
 	{
+		if (!StringX::valid($string)) {
+			return false;
+		}
+
 		return substr($string, $nth);
 	}
 
 
 
 
-	// • === end → remove end of string »
-	public static function end($string, $needle, $case = false)
-	{
-		if (EndX::with($string, $needle)) {
-			return StripX::last($string, $needle, $case);
-		}
-		return $string;
-	}
 
-
-
-
-	// • === endNth → crop from ending of string to nth position »
+	// • === endNth » crop from ending of string to nth position
 	public static function endNth($string, $nth)
 	{
+		if (!StringX::valid($string)) {
+			return false;
+		}
+
 		return substr($string, 0, $nth);
 	}
 } //> end of class ~ CropX
