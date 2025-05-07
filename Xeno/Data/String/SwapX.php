@@ -43,7 +43,7 @@ class SwapX
 
 
 
-	// • === all → all occurrence »
+	// • === all » all occurrence
 	public static function all($string, $search, $substitute = '', $case = false)
 	{
 		return self::text($string, $search, $substitute, 'all', $case);
@@ -53,7 +53,7 @@ class SwapX
 
 
 
-	// • === first → first occurrence »
+	// • === first » first occurrence
 	public static function first($string, $search, $substitute = '', $case = false)
 	{
 		return self::text($string, $search, $substitute, 'first', $case);
@@ -62,7 +62,7 @@ class SwapX
 
 
 
-	// • === last → last occurrence »
+	// • === last » last occurrence
 	public static function last($string, $search, $substitute = '', $case = false)
 	{
 		return self::text($string, $search, $substitute, 'last', $case);
@@ -72,7 +72,7 @@ class SwapX
 
 
 
-	// • === ds → directory separator »
+	// • === ds » directory separator
 	public static function ds($string, $substitute, $occurrence = 'all')
 	{
 		return self::text($string, DIRECTORY_SEPARATOR, $substitute, $occurrence);
@@ -82,7 +82,7 @@ class SwapX
 
 
 
-	// • === ps → path separator »
+	// • === ps » path separator
 	public static function ps($string, $substitute, $occurrence = 'all')
 	{
 		return self::text($string, '/', $substitute, $occurrence);
@@ -102,7 +102,7 @@ class SwapX
 
 
 
-	// • === space → replace space with character & vice-versa »
+	// • === space » replace space with character & vice-versa
 	public static function space($string, $search, $inverse = false)
 	{
 		if ($inverse) {
@@ -116,7 +116,7 @@ class SwapX
 
 
 
-	// • === withSpace → replace character with space »
+	// • === withSpace » replace character with space
 	public static function withSpace($string, $search)
 	{
 		return self::space($string, $search, true);
@@ -126,7 +126,7 @@ class SwapX
 
 
 
-	// • === ico2png → replace .ico with .png »
+	// • === ico2png » replace .ico with .png
 	public static function ico2png($string, $inverse = false)
 	{
 		if ($inverse) {
