@@ -15,11 +15,6 @@ use Groy\Xeno\Data\String\StripX;
 
 class StringX
 {
-
-
-
-
-
 	// • === is » can be a string
 	public static function is($string, $strict = false)
 	{
