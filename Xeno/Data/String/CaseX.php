@@ -7,26 +7,30 @@ use Groy\Xeno\Data\RandomX;
 
 class CaseX
 {
-	// • === lower »
-	public static function lower($string)
-	{
-		if (HasX::nothing($string)) {
-			return strtolower(trim($string));
-		}
-		return false;
-	}
-
-
-
-
 	// • === upper »
 	public static function upper($string)
 	{
-		if (HasX::nothing($string)) {
+		if (!StringX::valid($string)) {
 			return false;
 		}
+
 		return strtoupper($string);
 	}
+
+
+
+
+
+	// • === lower »
+	public static function lower($string)
+	{
+		if (!StringX::valid($string)) {
+			return false;
+		}
+
+		return strtolower(trim($string));
+	}
+
 
 
 
@@ -34,11 +38,11 @@ class CaseX
 	// • === sentence →
 	public static function sentence($string, $acronym = true, $caps = true)
 	{
-		if (HasX::nothing($string)) {
+		if (!StringX::valid($string)) {
 			return false;
 		}
 
-		// TODO:: implement & test code
+		// TODO:: Implement code
 
 		// if ($acronym) {
 		// 	$found = AcronymX::grab($string);
@@ -67,10 +71,11 @@ class CaseX
 
 
 
+
 	// • === snake →
 	public static function snake($string, $separator = null)
 	{
-		if (HasX::nothing($string)) {
+		if (!StringX::valid($string)) {
 			return false;
 		}
 
@@ -86,6 +91,7 @@ class CaseX
 		$string = implode(' ', $words);
 		$string = preg_replace('/\s+/u', '', ucwords($string));
 		$string = preg_replace('/(.)(?=[A-Z])/u', '$1_', $string);
+
 		return strtolower($string);
 	}
 
@@ -111,8 +117,10 @@ class CaseX
 
 		$string = !$strip ? ucwords($string, $separator) : ucwords($string);
 		$string = str_replace(' ', '', $string);
+
 		return lcfirst($string);
 	}
+
 
 
 
@@ -120,11 +128,11 @@ class CaseX
 	// • === capitalize →
 	public static function capitalize($string, $separator = null)
 	{
-		if (HasX::nothing($string)) {
+		if (!StringX::valid($string)) {
 			return false;
 		}
 
-		if (StringX::has($separator)) {
+		if (StringX::valid($separator)) {
 			return ucwords($string, $separator);
 		}
 
@@ -134,10 +142,11 @@ class CaseX
 
 
 
+
 	// • === firstCap »
 	public static function firstCap($string, $only = false)
 	{
-		if (HasX::nothing($string)) {
+		if (!StringX::valid($string)) {
 			return false;
 		}
 
@@ -151,26 +160,31 @@ class CaseX
 
 
 
-	// • === lowerCount →
-	public static function lowerCount($string)
-	{
-		if (HasX::nothing($string)) {
-			return false;
-		}
-		return preg_match_all('/[a-z]/', $string);
-	}
-
-
-
 
 	// • === upperCount →
 	public static function upperCount($string)
 	{
-		if (HasX::nothing($string)) {
+		if (!StringX::valid($string)) {
 			return false;
 		}
+
 		return preg_match_all('/[A-Z]/', $string);
 	}
+
+
+
+
+
+	// • === lowerCount →
+	public static function lowerCount($string)
+	{
+		if (!StringX::valid($string)) {
+			return false;
+		}
+
+		return preg_match_all('/[a-z]/', $string);
+	}
+
 
 
 
@@ -178,11 +192,13 @@ class CaseX
 	// • === upperToSpace →
 	public static function upperToSpace($string)
 	{
-		if (HasX::nothing($string)) {
+		if (!StringX::valid($string)) {
 			return false;
 		}
+
 		return preg_replace('/([a-z])([A-Z])/', '$1 $2', $string);
 	}
+
 
 
 
@@ -190,23 +206,13 @@ class CaseX
 	// • === lowerToSpace →
 	public static function lowerToSpace($string)
 	{
-		if (HasX::nothing($string)) {
+		if (!StringX::valid($string)) {
 			return false;
 		}
+
 		return preg_replace('/([A-Z])([a-z])/', '$1 $2', $string);
 	}
 
-
-
-
-	// • === isLower »
-	public static function isLower($string)
-	{
-		if (HasX::nothing($string)) {
-			return false;
-		}
-		return ctype_lower($string);
-	}
 
 
 
@@ -214,11 +220,27 @@ class CaseX
 	// • === isUpper »
 	public static function isUpper($string)
 	{
-		if (HasX::nothing($string)) {
+		if (!StringX::valid($string)) {
 			return false;
 		}
+
 		return ctype_upper($string);
 	}
+
+
+
+
+
+	// • === isLower »
+	public static function isLower($string)
+	{
+		if (!StringX::valid($string)) {
+			return false;
+		}
+
+		return ctype_lower($string);
+	}
+
 
 
 
@@ -226,19 +248,41 @@ class CaseX
 	// • === isMixed »
 	public static function isMixed($string)
 	{
-		if (HasX::nothing($string)) {
+		if (!StringX::valid($string)) {
 			return false;
 		}
+
 		return (preg_match('/[a-z]/', $string) && preg_match('/[A-Z]/', $string));
 	}
 
 
 
 
-	// • === grab »
-	public static function grabUpperOrLower($string, $case)
+
+	// • === getUpper → get upper case letter & positions » array, boolean [false]
+	public static function getUpper($string)
 	{
-		if (HasX::nothing($string) || empty($case)) {
+		return self::grab($string, 'upper');
+	}
+
+
+
+
+
+	// • === getLower → get lower case letter & positions » array, boolean [false]
+	public static function getLower($string)
+	{
+		return self::grab($string, 'lower');
+	}
+
+
+
+
+
+	// • === grab »
+	private static function grab($string, $case)
+	{
+		if (!StringX::valid($string) || empty($case)) {
 			return false;
 		}
 
@@ -253,30 +297,14 @@ class CaseX
 		if (!empty($matches[0])) {
 			$matches = $matches[0];
 			$grab = [];
+
 			foreach ($matches as $match) {
 				$grab[$match[1]] = $match[0];
 			}
+
 			return $grab;
 		}
 
 		return false;
-	}
-
-
-
-
-	// • === getUpper → get upper case letter & positions » array, boolean [false]
-	public static function getUpper($string)
-	{
-		return self::grabUpperOrLower($string, 'upper');
-	}
-
-
-
-
-	// • === getLower → get lower case letter & positions » array, boolean [false]
-	public static function getLower($string)
-	{
-		return self::grabUpperOrLower($string, 'lower');
 	}
 } //> end of class ~ CaseX
