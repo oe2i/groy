@@ -522,7 +522,7 @@ class StringX
 
 
 
-	// • === toArray → string to array »
+	// • === toArray » string to array
 	public static function toArray($string, $separator = null, $case = false)
 	{
 		if (!self::verified($string)) {
@@ -548,7 +548,7 @@ class StringX
 
 
 
-	// • === toObject → string to object »
+	// • === toObject » string to object
 	public static function toObject($string, $separator, $keySeparator)
 	{
 		if (!self::verified($string) || !self::is($separator)) {
@@ -576,7 +576,7 @@ class StringX
 
 
 
-	// • === before → string before character
+	// • === before » string before character
 	public static function before($string, $search, $strip = true, $case = false)
 	{
 		if (!self::verified($string) || !self::contain($string, $search, $case)) {
@@ -608,7 +608,7 @@ class StringX
 
 
 
-	// • === beforeAs → string before character or the string
+	// • === beforeAs » string before character or the string
 	public static function beforeAs($string, $search, $strip = true, $case = false)
 	{
 		$res = self::before($string, $search, $strip, $case);
@@ -640,7 +640,7 @@ class StringX
 
 
 
-	// • === after → string after character
+	// • === after » string after character
 	public static function after($string, $search, $strip = true, $case = false, $occurrence = 'first')
 	{
 		if (!self::verified($string) || !self::contain($string, $search, $case)) {
@@ -681,7 +681,7 @@ class StringX
 
 
 
-	// • === afterFirst → string after first occurrence of a character » string, false
+	// • === afterFirst » string after first occurrence of a character
 	public static function afterFirst($string, $search, $strip = true, $case = false)
 	{
 		return self::after($string, $search, $strip, $case, 'first');
@@ -691,7 +691,7 @@ class StringX
 
 
 
-	// • === afterLast → string after last occurrence of a character » string, false
+	// • === afterLast » string after last occurrence of a character
 	public static function afterLast($string, $search, $strip = true, $case = false)
 	{
 		return self::after($string, $search, $strip, $case, 'last');
@@ -701,7 +701,7 @@ class StringX
 
 
 
-	// • === afterAs → string after character or the string
+	// • === afterAs » string after character or the string
 	public static function afterAs($string, $search, $strip = true, $case = false, $occurrence = 'first')
 	{
 		$res = self::after($string, $search, $strip, $case, $occurrence);
@@ -717,7 +717,7 @@ class StringX
 
 
 
-	// • === afterFirstAs → string after character or the string
+	// • === afterFirstAs » string after character or the string
 	public static function afterFirstAs($string, $search, $strip = true, $case = false)
 	{
 		$res = self::afterFirst($string, $search, $strip, $case);
@@ -733,7 +733,7 @@ class StringX
 
 
 
-	// • === afterLastAs → string after character or the string
+	// • === afterLastAs » string after character or the string
 	public static function afterLastAs($string, $search, $strip = true, $case = false)
 	{
 		$res = self::afterLast($string, $search, $strip, $case);
@@ -761,7 +761,7 @@ class StringX
 
 
 
-	// • === blur → blur censored character & vice-versa
+	// • === blur » blur censored character & vice-versa
 	public static function blur($string, $library, $blur = '***', $case = false)
 	{
 		if (!self::verified($string) || empty($library)) {
@@ -798,7 +798,7 @@ class StringX
 
 
 
-	// • === match → match pattern » boolean, string, array
+	// • === match » match pattern
 	public static function match($string, $pattern, $return = 'boolean', $flags = 0, $offset = 0)
 	{
 		if (!self::verified($string) || HasX::nothing($pattern)) {
