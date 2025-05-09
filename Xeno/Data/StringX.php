@@ -3,15 +3,16 @@
 namespace Groy\Xeno\Data;
 
 use Illuminate\Support\Str;
-use Groy\Xeno\Data\String\EndX;
-use Groy\Xeno\Data\String\HasX;
-use Groy\Xeno\Data\String\CaseX;
-use Groy\Xeno\Data\String\CropX;
-use Groy\Xeno\Data\String\SwapX;
 use Groy\Xeno\Data\String\WordX;
-use Groy\Xeno\Data\String\BeginX;
-use Groy\Xeno\Data\String\SpaceX;
+use Groy\Xeno\Data\String\SwapX;
 use Groy\Xeno\Data\String\StripX;
+use Groy\Xeno\Data\String\SpaceX;
+use Groy\Xeno\Data\String\HasX;
+use Groy\Xeno\Data\String\EndX;
+use Groy\Xeno\Data\String\CropX;
+use Groy\Xeno\Data\String\CaseX;
+use Groy\Xeno\Data\String\BeginX;
+use Groy\Xeno\Core\VarX;
 
 class StringX
 {
@@ -181,7 +182,7 @@ class StringX
 	// • === containAny »
 	public static function containAny($string, $search, $case = true)
 	{
-		if (!self::verified($string) || empty($search)) {
+		if (!self::verified($string) || VarX::empty($search)) {
 			return false;
 		}
 
@@ -201,7 +202,7 @@ class StringX
 		});
 
 		foreach ($search as $needle) {
-			if (str_contains($string, $search)) {
+			if (str_contains($string, $needle)) {
 				return true;
 			}
 		}
