@@ -3,6 +3,7 @@
 namespace Groy\Xeno\Core;
 
 use Illuminate\Support\Collection;
+use Groy\Xeno\Data\StringX;
 
 class VarX
 {
@@ -103,22 +104,34 @@ class VarX
 
 
 
+
 	// • === empty » if a set variable is empty
 	public static function empty($var)
 	{
-		if (self::is($var)) {
-			if (is_string($var) && strlen($var) < 1) {
-				return true;
-			}
-
-			if (is_array($var) || is_object($var) && (empty($var))) {
-				return true;
-			}
-
-			if ($var instanceof Collection) {
-				return $var->isEmpty();
-			}
+		if (is_null($var)) {
+			return true;
 		}
+
+		if (StringX::is($var)) {
+			if (strlen($var) === 0) {
+				return true;
+			}
+			return false;
+		}
+
+		if (is_array($var) || is_object($var)) {
+			if (empty($var)) {
+				return true;
+			}
+			return false;
+		}
+
+		if ($var instanceof Collection) {
+			return $var->isEmpty();
+		}
+
+		//TODO: Implement more types of empty check!
+
 		return false;
 	}
 
@@ -232,7 +245,8 @@ class VarX
 			return true;
 		}
 
-		// TODO: move this block to CompareX - for other comparison
+		// REVIEW: Move code-block to CompareX
+		// TODO: Implement more comparison
 		if (is_string($var) && !is_null($comparison)) {
 			if ($strict ? $var !== $comparison : $var != $comparison) {
 				$var = $as;
