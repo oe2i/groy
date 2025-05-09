@@ -6,17 +6,47 @@ use Illuminate\Support\Collection;
 use Groy\Xeno\Data\String\SwapX as StrSwapX;
 use Groy\Xeno\Data\String\BeginX as StrBeginX;
 use Groy\Xeno\Data\StringX;
+use Groy\Xeno\Data\CollectionX;
 use Groy\Xeno\Core\DebugX;
 
 class OrioX
 {
-	// • === setAttr »
-	public static function setAttr(array $attribute, Collection|array &$attributes)
+	// • === initAttr »
+	public static function initAttr($attributes = null)
 	{
-		foreach ($attribute as $label => $value) {
-			if ($value) {
-				$attributes[] = $label . '="' . e($value) . '"';
+		if (!$attributes) {
+			$attributes = collect();
+		}
+		return $attributes;
+	}
+
+
+
+
+
+	// • === setAttr »
+	public static function setAttr(array|string $attribute, Collection|array &$attributes)
+	{
+		if (is_array($attribute)) {
+			foreach ($attribute as $label => $value) {
+				if (is_bool($value) && $value === true) {
+					$attributes->push($label);
+				} elseif ($value) {
+					$attributes[] = $label . '="' . e($value) . '"';
+				}
 			}
+		}
+	}
+
+
+
+
+
+	// • === toAttr »
+	public static function toAttr(&$attributes)
+	{
+		if (CollectionX::is($attributes)) {
+			$attributes = $attributes->implode(' ');
 		}
 	}
 
@@ -27,6 +57,10 @@ class OrioX
 	// • === asset »
 	public static function asset($path = null): string|bool
 	{
+		if ($path === 'orio') {
+			return '/orio/orio';
+		}
+
 		$search = ['orio', '/orio', DIRECTORY_SEPARATOR . 'orio'];
 		$orio = StrBeginX::withAny($path, $search, true);
 		if ($orio) {
