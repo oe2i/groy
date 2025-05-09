@@ -7,7 +7,7 @@ use Groy\Xeno\Data\Array\ValueX as ArrValueX;
 
 class BeginX
 {
-	// • === with »
+	// ◇ === with »
 	public static function with($string, $search, $return = false, $case = false): bool|int|string
 	{
 		if (!StringX::verified($string, $search)) {
@@ -38,7 +38,7 @@ class BeginX
 
 
 
-	// • === withAny → check if string begin with anything in array or comma separated string » string, boolean
+	// ◇ === withAny »
 	public static function withAny($string, $search, $return = false, $case = false)
 	{
 		if (!StringX::valid($string) || empty($search)) {
@@ -75,7 +75,7 @@ class BeginX
 
 
 
-	// • === ifNot »
+	// ◇ === ifNot »
 	public static function ifNot($string, $search, $prefix = null, $case = false)
 	{
 		if (!self::with($string, $search, false, $case)) {
@@ -94,7 +94,7 @@ class BeginX
 
 
 
-	// • === ifNotAny »
+	// ◇ === ifNotAny »
 	public static function ifNotAny($string, $search, $prefix = null, $case = false)
 	{
 		if (!is_array($search)) {
@@ -117,7 +117,7 @@ class BeginX
 
 
 
-	// • === newline »
+	// ◇ === newline »
 	public static function newline($string)
 	{
 		if (!StringX::valid($string)) {
@@ -126,4 +126,5 @@ class BeginX
 
 		return preg_match('/^(?!\r\n|\r|\n)/', $string);
 	}
+
 } //> end of class ~ BeginX
