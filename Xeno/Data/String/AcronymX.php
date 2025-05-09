@@ -6,10 +6,10 @@ use Groy\Xeno\Data\StringX;
 
 class AcronymX
 {
-	// • === has »
+	// ◇ === has »
 	public static function has($string)
 	{
-		if(!StringX::verified($string)){
+		if (!StringX::verified($string)) {
 			return false;
 		}
 
@@ -20,10 +20,10 @@ class AcronymX
 
 
 
-	// • === grab » used to grab upper case words
+	// ◇ === grab » used to grab upper case words
 	public static function grab($string)
 	{
-		if(!StringX::verified($string)){
+		if (!StringX::verified($string)) {
 			return false;
 		}
 
