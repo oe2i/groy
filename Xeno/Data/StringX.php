@@ -37,6 +37,39 @@ class StringX
 
 
 
+	// ◇ === isAny »
+	public static function isAny($string, $search, $case = false)
+	{
+		if (!self::verified($string) || VarX::empty($search)) {
+			return false;
+		}
+
+		if (!is_array($search)) {
+			if ($case) {
+				return ($string === $search);
+			}
+
+			return (strtolower($string) === strtolower($search));
+		}
+
+		if (!$case) {
+			$string = strtolower($string);
+			$search = array_map('strtolower', $search);
+		}
+
+		foreach ($search as $needle) {
+			if ($string === $needle) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+
+
+
+
 	// • === length » no of characters or 0
 	public static function length($string)
 	{
@@ -139,7 +172,7 @@ class StringX
 
 
 	// • === in »
-	public static function in($string, $search, $case = true)
+	public static function in($string, $search, $case = false)
 	{
 		if (!self::verified($string, $search)) {
 			return false;
@@ -157,7 +190,7 @@ class StringX
 
 
 	// • === contain »
-	public static function contain($string, $search, $case = true)
+	public static function contain($string, $search, $case = false)
 	{
 		if (!self::verified($string)) {
 			return false;
@@ -180,7 +213,7 @@ class StringX
 
 
 	// • === containAny »
-	public static function containAny($string, $search, $case = true)
+	public static function containAny($string, $search, $case = false)
 	{
 		if (!self::verified($string) || VarX::empty($search)) {
 			return false;
