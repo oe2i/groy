@@ -3,7 +3,9 @@
 namespace Groy\Xeno\Vine;
 
 use Illuminate\Support\Collection;
+use Groy\Xeno\Format\FormatX;
 use Groy\Xeno\Data\String\SwapX as StrSwapX;
+use Groy\Xeno\Data\String\EndX as StrEndX;
 use Groy\Xeno\Data\String\BeginX as StrBeginX;
 use Groy\Xeno\Data\StringX;
 use Groy\Xeno\Data\CollectionX;
@@ -11,7 +13,7 @@ use Groy\Xeno\Core\DebugX;
 
 class OrioX
 {
-	// • === initAttr »
+	// ◇ === initAttr »
 	public static function initAttr($attributes = null)
 	{
 		if (!$attributes) {
@@ -24,7 +26,7 @@ class OrioX
 
 
 
-	// • === setAttr »
+	// ◇ === setAttr »
 	public static function setAttr(array|string $attribute, Collection|array &$attributes)
 	{
 		if (is_array($attribute)) {
@@ -42,7 +44,7 @@ class OrioX
 
 
 
-	// • === toAttr »
+	// ◇ === toAttr »
 	public static function toAttr(&$attributes)
 	{
 		if (CollectionX::is($attributes)) {
@@ -54,7 +56,7 @@ class OrioX
 
 
 
-	// • === asset »
+	// ◇ === asset »
 	public static function asset($path = null): string|bool
 	{
 		if ($path === 'orio') {
@@ -68,7 +70,28 @@ class OrioX
 			$path = StrSwapX::all($path, '::', '/');
 			return $path;
 		}
+
 		return false;
+	}
+
+
+
+
+
+	// ◇ === title »
+	public static function title(?string $title, ?string $secondary)
+	{
+		if (empty($title)) {
+			return FormatX::title(ProjectX::name());
+		}
+
+		if (!empty($title)) {
+			if (!empty($secondary) && !StringX::contain($title, $secondary)) {
+				$title .= ' - ' . $secondary;
+			}
+			$title = StrEndX::ifNot($title, ' • ' . ProjectX::brand());
+			return FormatX::title($title);
+		}
 	}
 
 } //> end of class ~ OrioX
