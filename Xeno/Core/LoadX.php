@@ -85,7 +85,30 @@ class LoadX
 
 
 	// • === web »
-	public static function web($path = 'web')
+	public static function web()
+	{
+		return [
+			self::route('theme::app'),
+			self::route('theme::site')
+		];
+	}
+
+
+
+
+
+	// ◇ === auth »
+	public static function auth($path = 'auth')
+	{
+		return self::route('theme::' . $path);
+	}
+
+
+
+
+
+	// ◇ === verified »
+	public static function verified($path = 'verified')
 	{
 		return self::route('theme::' . $path);
 	}
