@@ -7,21 +7,35 @@ use Illuminate\Support\Str;
 
 class WordX
 {
-	// • === first »
+	// ◇ === first »
 	public static function first($string)
 	{
 		if (!StringX::valid($string)) {
 			return false;
 		}
 
-		return Str::words($string, 1);
+		return Str::words(trim($string), 1);
 	}
 
 
 
 
 
-	// • === count »
+	// ◇ === last »
+	public static function last($string)
+	{
+		if (!StringX::valid($string)) {
+			return false;
+		}
+
+		return Str::of(trim($string))->explode(' ')->last();
+	}
+
+
+
+
+
+	// ◇ === count »
 	public static function count($string, $character = null)
 	{
 		if (!StringX::valid($string)) {
@@ -35,13 +49,13 @@ class WordX
 
 
 
-	// • === limit » limit number of words
-	public static function limit($string, $noOfWords)
+	// ◇ === limit » limit number of words
+	public static function limit($string, $noOfWords, $endWith = '...')
 	{
 		if (!StringX::valid($string) || !is_numeric($noOfWords)) {
 			return false;
 		}
 
-		return Str::words($string, $noOfWords);
+		return Str::words($string, $noOfWords, $endWith);
 	}
 } //> end of class ~ WordX
