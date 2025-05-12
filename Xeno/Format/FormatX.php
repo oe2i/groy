@@ -3,11 +3,13 @@
 namespace Groy\Xeno\Format;
 
 use Groy\Xeno\Data\String\StripX;
+use Groy\Xeno\Data\String\SpaceX;
+use Groy\Xeno\Data\String\CaseX;
 use Groy\Xeno\Data\StringX;
 
 class FormatX
 {
-	// • === aria »
+	// ◇ === aria »
 	public static function aria($aria)
 	{
 		return ucfirst($aria);
@@ -16,7 +18,7 @@ class FormatX
 
 
 
-	// • === name »
+	// ◇ === name »
 	public static function name()
 	{
 		return new NameX;
@@ -25,7 +27,7 @@ class FormatX
 
 
 
-	// • === email »
+	// ◇ === email »
 	public static function email($email)
 	{
 		return strtolower($email);
@@ -34,7 +36,7 @@ class FormatX
 
 
 
-	// • === html » format as HTML
+	// ◇ === html » format as HTML
 	public static function html($content)
 	{
 		$content = trim($content);
@@ -48,6 +50,48 @@ class FormatX
 
 		return StripX::paragraph($output);
 	}
+
+
+
+
+
+	// ◇ === title »
+	public static function title($title)
+	{
+		if (StringX::valid($title)) {
+			$firstChar = $title[0];
+			if (CaseX::isLower($firstChar)) {
+				if (CaseX::upperCount($title) > 0 && !SpaceX::has($title)) {
+					$title = CaseX::upperToSpace($title);
+				}
+			} else {
+				if (CaseX::upperCount($title) > 1) {
+					$title = CaseX::upperToSpace($title);
+				}
+				$title = SpaceX::single($title);
+			}
+			return ucwords($title);
+		}
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -204,35 +248,7 @@ class FormatX
 
 
 
-	// ◈ === title »
-	public static function title($title)
-	{
-		$title = StringX::cropEnd($title, '...');
-		$title = StringX::space($title);
-		if (StringX::countWord($title) == 2) {
-			return ucwords($title);
-		}
-		return StringX::sentence($title);
-	}
 
-	// ◈ === title »
-	public static function title2($var)
-	{
-		if (!empty($var)) {
-			$firstChar = $var[0];
-			if (StringX::isLowercase($firstChar)) {
-				if (StringX::uppercaseCount($var) > 0 && !StringX::hasSpace($var)) {
-					$var = StringX::uppercaseToSpace($var);
-				}
-			} else {
-				if (StringX::uppercaseCount($var) > 1) {
-					$var = StringX::uppercaseToSpace($var);
-				}
-				$var = StringX::singleSpace($var);
-			}
-			return ucwords($var);
-		}
-	}
 
 
 
