@@ -72,14 +72,10 @@ class HasX
 
 
 
-	// • === space »
+	// ◇ === space »
 	public static function space($string)
 	{
-		if (!StringX::valid($string)) {
-			return false;
-		}
-
-		return (strpos(trim($string), ' ') !== false);
+		return SpaceX::has($string);
 	}
 
 
