@@ -3,8 +3,10 @@
 namespace Groy\Xeno\Core;
 
 use Groy\Xeno\Trait\StaticX;
-use Groy\Xeno\Data\String\BeginX;
-use Groy\Xeno\Data\String\CropX;
+use Groy\Xeno\Data\String\EndX as StrEndX;
+use Groy\Xeno\Data\String\CropX as StrCropX;
+use Groy\Xeno\Data\String\BeginX as StrBeginX;
+use Groy\Xeno\Data\StringX;
 
 class PathX
 {
@@ -112,22 +114,22 @@ class PathX
 	{
 		self::init();
 
-		if (BeginX::with($path, 'theme')) {
+		if (StrBeginX::with($path, 'theme')) {
 			$path = self::theme($path);
 		}
 
-		if (BeginX::with($path, 'debug')) {
+		if (StrBeginX::with($path, 'debug')) {
 			$path = self::debug($path);
 		}
 
 		if (is_string($path)) {
-			$path = 'routes' . BeginX::ifNot($path, self::$ds);
+			$path = 'routes' . StrBeginX::ifNot($path, self::$ds);
 			$path = self::base($path);
 		}
 
 		if (is_array($path)) {
 			foreach ($path as $key => $value) {
-				$value = 'routes' . BeginX::ifNot($value, self::$ds);
+				$value = 'routes' . StrBeginX::ifNot($value, self::$ds);
 				$path[$key] = self::base($value);
 			}
 		}
@@ -174,32 +176,21 @@ class PathX
 
 
 
-	// • === theme »
+
+	// ◇ === theme »
 	private static function theme(string $path)
 	{
 		self::init();
 		$theme = self::$theme . self::$ds;
 
-		if ($path === 'theme::api') {
-			return $theme . 'api.php';
+		if (StringX::contain($path, '::')) {
+			$path = $theme . StringX::after($path, '::');
+			$path = StrEndX::ifNot($path, '.php');
+			return $path;
 		}
 
-		if ($path === 'theme::app') {
-			return $theme . 'app.php';
-		}
-
-		if ($path === 'theme::site') {
-			return $theme . 'site.php';
-		}
-
-		if ($path === 'theme::web') {
-			return [
-				'app' => $theme . 'app.php',
-				'site' => $theme . 'site.php'
-			];
-		}
-
-		return $theme . CropX::begin($path, self::$ds);
+		// TODO: review code & improve it
+		return $theme . StrCropX::begin($path, self::$ds);
 	}
 
 
@@ -216,7 +207,7 @@ class PathX
 		} elseif ($path === 'debug::app') {
 			$path = $debug . 'app.php';
 		} else {
-			$path = $debug . CropX::begin($path, self::$ds);
+			$path = $debug . StrCropX::begin($path, self::$ds);
 		}
 
 		return $path;
