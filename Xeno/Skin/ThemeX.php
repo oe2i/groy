@@ -49,7 +49,7 @@ class ThemeX
 		if (in_array($path, ['page', 'site', 'slab', 'layout'])) {
 			$blade .= ".{$path}.";
 		} elseif ($path != 'theme') {
-			// NOTE: repetitive [makeshift] - feature is TODO
+			// TODO: Repetitive [makeshift] feature
 			$blade .= '.' . $path;
 		}
 		$blade .= $file;
