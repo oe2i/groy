@@ -1,6 +1,6 @@
-# Groy™
+# Groy™ Library
 
-[Groy](https://oe2i.org/groy)™ is a powerful PHP library by [OE2i™](https://oe2i.com/), designed to streamline and enhance web application development using the [Laravel](https://laravel.com) framework. It is open-source, Apache Licensed, and offers flexibility for usage and modification.
+[Groy](https://oe2i.org/groy)™ Library is a powerful PHP library by [OE2i™](https://oe2i.com/), designed to streamline and enhance web application development using the [Laravel](https://laravel.com) framework. It is open-source, Apache Licensed, and offers flexibility for usage and modification.
 
 ## Licensing
 
