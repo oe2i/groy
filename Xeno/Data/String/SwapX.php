@@ -102,6 +102,16 @@ class SwapX
 
 
 
+	// • === dot » path separator
+	public static function dot($string, $substitute, $occurrence = 'all')
+	{
+		return self::text($string, '.', $substitute, $occurrence);
+	}
+
+
+
+
+
 	// • === space » replace space with character & vice-versa
 	public static function space($string, $search, $inverse = false)
 	{
