@@ -57,18 +57,24 @@ class OrioX
 
 
 	// ◇ === asset »
-	public static function asset($path = null): string|bool
+	public static function asset($path = null, $type = null): string|bool
 	{
 		if ($path === 'orio') {
-			return '/orio/orio';
+			$groy = '/groy/';
+			if ($type) {
+				$groy .= $type . '/';
+			}
+			return $groy . 'orio';
 		}
 
-		$search = ['orio', '/orio', DIRECTORY_SEPARATOR . 'orio'];
-		$orio = StrBeginX::withAny($path, $search, true);
-		if ($orio) {
-			$path = StrSwapX::first($path, $orio, '/orio');
-			$path = StrSwapX::all($path, '::', '/');
-			return $path;
+		$search = ['groy', '/groy', DIRECTORY_SEPARATOR . 'groy'];
+		$groy = StrBeginX::withAny($path, $search, true);
+		if ($groy) {
+			$path = StrSwapX::first($path, $groy, '/groy');
+			if ($type) {
+				$path = StrSwapX::first($path, '/groy', '/groy/' . $type);
+			}
+			return StrSwapX::all($path, '::', '/');
 		}
 
 		return false;
