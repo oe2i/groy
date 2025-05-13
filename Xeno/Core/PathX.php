@@ -133,7 +133,6 @@ class PathX
 				$path[$key] = self::base($value);
 			}
 		}
-
 		return $path;
 	}
 
@@ -183,13 +182,19 @@ class PathX
 		self::init();
 		$theme = self::$theme . self::$ds;
 
-		if (StringX::contain($path, '::')) {
-			$path = $theme . StringX::after($path, '::');
-			$path = StrEndX::ifNot($path, '.php');
-			return $path;
+		if (StringX::contain($path, '::') && StringX::after($path, '::')) {
+			$file = StringX::after($path, '::');
+			if (in_array($file, ['auth', 'verified'])) {
+				$file = 'groy' . DIRECTORY_SEPARATOR . $file;
+			}
+
+			if ($file) {
+				$file = $theme . $file;
+			}
+
+			return StrEndX::ifNot($file, '.php');
 		}
 
-		// TODO: review code & improve it
 		return $theme . StrCropX::begin($path, self::$ds);
 	}
 
