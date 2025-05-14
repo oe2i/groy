@@ -1,6 +1,6 @@
-<?php
+<?php //*** Alias ~ class » Groy™ Library © May, 2025 ∞ OE2i™ • www.oe2i.com ∞ Apache License ***//
 
-use App\Yaic\Vine\Auth\Organizer;//*** Alias ~ class » Groy™ Library © May, 2025 ∞ OE2i™ • www.oe2i.com ∞ Apache License ***//
+use App\Yaic\Vine\Auth\Organizer;
 
 // namespace Groy;
 // use RecursiveIteratorIterator;
